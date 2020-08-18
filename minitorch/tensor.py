@@ -27,6 +27,7 @@ def rand(shape):
        :class:`Tensor` : New tensor
     """
 
+    # TODO: Implement.
     raise NotImplementedError
 
 
@@ -195,10 +196,12 @@ class Mul(Function):
 
     @staticmethod
     def forward(ctx, a, b):
+        # TODO: Implement.
         raise NotImplementedError
 
     @staticmethod
     def backward(ctx, grad_output):
+        # TODO: Implement.
         raise NotImplementedError
 
 
@@ -206,10 +209,12 @@ class Sigmoid(Function):
 
     @staticmethod
     def forward(ctx, a):
+        # TODO: Implement.
         raise NotImplementedError
 
     @staticmethod
     def backward(ctx, grad_output):
+        # TODO: Implement.
         raise NotImplementedError
 
 
@@ -217,10 +222,12 @@ class ReLU(Function):
 
     @staticmethod
     def forward(ctx, a):
+        # TODO: Implement.
         raise NotImplementedError
 
     @staticmethod
     def backward(ctx, grad_output):
+        # TODO: Implement.
         raise NotImplementedError
 
 
@@ -228,10 +235,12 @@ class Log(Function):
 
     @staticmethod
     def forward(ctx, a):
+        # TODO: Implement.
         raise NotImplementedError
 
     @staticmethod
     def backward(ctx, grad_output):
+        # TODO: Implement.
         raise NotImplementedError
 
 
@@ -254,10 +263,12 @@ class Sum(Function):
 class Mean(Function):
     @staticmethod
     def forward(ctx, a, dim):
+        # TODO: Implement.
         raise NotImplementedError
 
     @staticmethod
     def backward(ctx, grad_output):
+        # TODO: Implement.
         raise NotImplementedError
 
 
@@ -266,10 +277,12 @@ class LT(Function):
 
     @staticmethod
     def forward(ctx, a, b):
+        # TODO: Implement.
         raise NotImplementedError
 
     @staticmethod
     def backward(ctx, grad_output):
+        # TODO: Implement.
         raise NotImplementedError
 
 

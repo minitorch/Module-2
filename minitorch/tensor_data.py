@@ -86,6 +86,7 @@ def index_to_position(index, strides):
         int : position in storage
     """
 
+    # TODO: Implement.
     raise NotImplementedError
 
 
@@ -105,6 +106,7 @@ def count(position, shape):
        list : an index within shape
 
     """
+    # TODO: Implement.
     raise NotImplementedError
 
 
@@ -126,6 +128,7 @@ def broadcast_index_to_position(index, strides, shape):
        int: storage position after unbroadcasting and converting.
 
     """
+    # TODO: Implement.
     raise NotImplementedError
 
 
@@ -141,6 +144,7 @@ def shape_broadcast(shape1, shape2):
        tuple: broadcasted shape
 
     """
+    # TODO: Implement.
     raise NotImplementedError
 
 
@@ -177,6 +181,7 @@ class TensorData:
 
     def is_contiguous(self):
         "Check that the layout is contiguous, i.e. outer dimensions have bigger strides than inner dimensions. "
+        # TODO: Implement.
         raise NotImplementedError
 
     @staticmethod
@@ -232,6 +237,7 @@ class TensorData:
             range(len(self.shape))
         ), f"Must give a position to each dimension. Shape: {self.shape} Order: {order}"
 
+        # TODO: Implement.
         raise NotImplementedError
 
     def to_string(self):

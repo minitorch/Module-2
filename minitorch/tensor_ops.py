@@ -34,6 +34,7 @@ def tensor_map(fn):
 
     @jit
     def _map(out, out_shape, out_strides, in_storage, in_shape, in_strides):
+        # TODO: Implement.
         raise NotImplementedError
 
     return _map
@@ -70,6 +71,7 @@ def tensor_zip(fn):
 
     @jit
     def _zip(out, out_shape, out_strides, a, a_shape, a_strides, b, b_shape, b_strides):
+        # TODO: Implement.
         raise NotImplementedError
 
     return _zip
@@ -107,6 +109,7 @@ def tensor_reduce(fn):
     def _reduce(
         out, out_shape, out_strides, a, a_shape, a_strides, reduce_shape, reduce_size
     ):
+        # TODO: Implement.
         raise NotImplementedError
 
     return _reduce
