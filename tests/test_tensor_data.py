@@ -44,6 +44,38 @@ def test_enumeration(tensor_data):
 
 
 @pytest.mark.task2_1
+@given(tensor_data())
+def test_index(tensor_data):
+    "Test enumeration of tensor_data."
+    # Check that all indices are within the size.
+    for ind in tensor_data.indices():
+        pos = tensor_data.index(ind)
+        assert pos >= 0 and pos < tensor_data.size
+
+    base = [0] * tensor_data.dims
+    with pytest.raises(minitorch.IndexingError):
+        base[0] = -1
+        tensor_data.index(tuple(base))
+
+    if tensor_data.dims > 1:
+        with pytest.raises(minitorch.IndexingError):
+            base = [0] * (tensor_data.dims - 1)
+            tensor_data.index(tuple(base))
+
+
+@pytest.mark.task2_1
+@given(data())
+def test_permute(data):
+    td = data.draw(tensor_data())
+    ind = data.draw(indices(td))
+    td_rev = td.permute(*list(reversed(range(td.dims))))
+    assert td.index(ind) == td_rev.index(tuple(reversed(ind)))
+
+    td2 = td_rev.permute(*list(reversed(range(td_rev.dims))))
+    assert td.index(ind) == td2.index(ind)
+
+
+@pytest.mark.task2_4
 def test_shape_broadcast():
     c = minitorch.shape_broadcast((1,), (5, 5))
     assert c == (5, 5)
@@ -67,38 +99,6 @@ def test_shape_broadcast():
 
     c = minitorch.shape_broadcast((2, 5), (5,))
     assert c == (2, 5)
-
-
-@pytest.mark.task2_1
-@given(tensor_data())
-def test_index(tensor_data):
-    "Test enumeration of tensor_data."
-    # Check that all indices are within the size.
-    for ind in tensor_data.indices():
-        pos = tensor_data.index(ind)
-        assert pos >= 0 and pos < tensor_data.size
-
-    base = [0] * tensor_data.dims
-    with pytest.raises(minitorch.IndexingError):
-        base[0] = -1
-        tensor_data.index(base)
-
-    if tensor_data.dims > 1:
-        with pytest.raises(minitorch.IndexingError):
-            base = [0] * (tensor_data.dims - 1)
-            tensor_data.index(base)
-
-
-@pytest.mark.task2_1
-@given(data())
-def test_permute(data):
-    td = data.draw(tensor_data())
-    ind = data.draw(indices(td))
-    td_rev = td.permute(*list(reversed(range(td.dims))))
-    assert td.index(ind) == td_rev.index(tuple(reversed(ind)))
-
-    td2 = td_rev.permute(*list(reversed(range(td_rev.dims))))
-    assert td.index(ind) == td2.index(ind)
 
 
 @given(tensor_data())
