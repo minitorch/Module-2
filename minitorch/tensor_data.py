@@ -1,7 +1,7 @@
 import random
 from .operators import prod
 from numpy import array, float64, ndarray
-
+import numba
 
 MAX_DIMS = 32
 
@@ -113,6 +113,10 @@ class TensorData:
         self.shape = shape
         assert len(self._storage) == self.size
 
+    def to_cuda_(self):
+        if not numba.cuda.is_cuda_array(self._storage):
+            self._storage = numba.cuda.to_device(self._storage)
+
     def is_contiguous(self):
         "Check that the layout is contiguous, i.e. outer dimensions have bigger strides than inner dimensions. "
         last = 1e9
@@ -154,11 +158,11 @@ class TensorData:
     def sample(self):
         return tuple((random.randint(0, s - 1) for s in self.shape))
 
-    def get(self, key, broadcast=False):
-        return self._storage[self.index(key, broadcast)]
+    def get(self, key):
+        return self._storage[self.index(key)]
 
-    def set(self, key, val, broadcast=False):
-        self._storage[self.index(key, broadcast)] = val
+    def set(self, key, val):
+        self._storage[self.index(key)] = val
 
     def tuple(self):
         return (self._storage, self._shape, self._strides)

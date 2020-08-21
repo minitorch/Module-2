@@ -35,12 +35,6 @@ def tensor(ls, shape=None):
     return Tensor.make(ls, shape)
 
 
-def ensure_tensor(b):
-    if isinstance(b, (int, float)):
-        return tensor([b])
-    return b
-
-
 # Tensor class
 class Tensor(Variable):
     def __init__(self, v, back=None, name=None, backend=None):
@@ -58,10 +52,10 @@ class Tensor(Variable):
     def make(storage, shape, strides=None, backend=None):
         return Tensor(TensorData(storage, shape, strides), backend=backend)
 
-    def cuda(self):
-        return Tensor(
-            self._tensor, back=self.back, name=self.name, backend=CudaTensorFunctions
-        )
+    def type_(self, tf):
+        self.tf = tf
+        if "Cuda" in str(tf._backend):
+            self._tensor.to_cuda_()
 
     # Properties
     @property
@@ -79,24 +73,30 @@ class Tensor(Variable):
     def contiguous(self):
         return self.tf.Copy.apply(self)
 
+    def ensure_tensor(self, b):
+        if isinstance(b, (int, float)):
+            b = tensor([b])
+        b.type_(self.tf)
+        return b
+
     # Functions
     def __add__(self, b):
-        return self.tf.Add.apply(self, ensure_tensor(b))
+        return self.tf.Add.apply(self, self.ensure_tensor(b))
 
     def __sub__(self, b):
-        return self.tf.Add.apply(self, -ensure_tensor(b))
+        return self.tf.Add.apply(self, -self.ensure_tensor(b))
 
     def __mul__(self, b):
-        return self.tf.Mul.apply(self, ensure_tensor(b))
+        return self.tf.Mul.apply(self, self.ensure_tensor(b))
 
     def __truediv__(self, b):
         return self.tf.Mul.apply(self, tensor([1 / b]))
 
     def __lt__(self, b):
-        return self.tf.LT.apply(self, ensure_tensor(b))
+        return self.tf.LT.apply(self, self.ensure_tensor(b))
 
     def __gt__(self, b):
-        return self.tf.LT.apply(ensure_tensor(b), self)
+        return self.tf.LT.apply(self.ensure_tensor(b), self)
 
     def __neg__(self):
         return self.tf.Neg.apply(self)
@@ -142,12 +142,12 @@ class Tensor(Variable):
 
         shape = TensorData.shape_broadcast(self.shape, other.shape)
         buf = zeros(shape)
-        self.tf.id_map(other, out=buf)
+        self.tf._id_map(other, out=buf)
         if self.shape == shape:
             return buf
 
         buf2 = zeros(self.shape)
-        self.tf.add_reduce(buf, out=buf2)
+        self.tf._add_reduce(buf, out=buf2)
         return buf2
 
     # Internal
@@ -157,7 +157,7 @@ class Tensor(Variable):
             out = zeros(self.shape)
         else:
             out = zeros(shape)
-        out.tf = self.tf
+        out.type_(self.tf)
         return out
 
     def tuple(self):
@@ -165,7 +165,7 @@ class Tensor(Variable):
 
     # Extra
     def get_data(self):
-        return Tensor(self._tensor)
+        return Tensor(self._tensor, backend=self.tf)
 
     def backward(self, grad_output=None):
         if grad_output is None:
@@ -181,7 +181,9 @@ class Function(FunctionBase):
 
     @staticmethod
     def variable(data, back):
-        return Tensor(data[0], back, backend=data[1])
+        t = Tensor(data[0], back)
+        t.type_(data[1])
+        return t
 
     @staticmethod
     def data(a):
@@ -189,34 +191,38 @@ class Function(FunctionBase):
 
 
 def make_tensor_functions(backend):
+    neg_map = backend.map(operators.neg)
+    sigmoid_map = backend.map(operators.sigmoid)
+    relu_map = backend.map(operators.relu)
+    log_map = backend.map(operators.log)
+    id_map = backend.map(operators.id)
+
+    add_zip = backend.zip(operators.add)
+    mul_zip = backend.zip(operators.mul)
+    lt_zip = backend.zip(operators.lt)
+    relu_back_zip = backend.zip(operators.relu_back)
+    log_back_zip = backend.zip(operators.log_back)
+
+    add_reduce = backend.reduce(operators.add)
+
     class TF:
-        neg_map = backend.map(operators.neg)
-        sigmoid_map = backend.map(operators.sigmoid)
-        relu_map = backend.map(operators.relu)
-        log_map = backend.map(operators.log)
-        id_map = backend.map(operators.id)
-
-        add_zip = backend.zip(operators.add)
-        mul_zip = backend.zip(operators.mul)
-        lt_zip = backend.zip(operators.lt)
-        relu_back_zip = backend.zip(operators.relu_back)
-        log_back_zip = backend.zip(operators.log_back)
-
-        add_reduce = backend.reduce(operators.add)
+        _add_reduce = add_reduce
+        _id_map = id_map
+        _backend = backend
 
         class Neg(Function):
             @staticmethod
             def forward(ctx, t1):
-                return TF.neg_map(t1)
+                return neg_map(t1)
 
             @staticmethod
             def backward(ctx, grad_output):
-                return TF.neg_map(grad_output)
+                return neg_map(grad_output)
 
         class Add(Function):
             @staticmethod
             def forward(ctx, t1, t2):
-                return TF.add_zip(t1, t2)
+                return add_zip(t1, t2)
 
             @staticmethod
             def backward(ctx, grad_output):
@@ -271,9 +277,9 @@ def make_tensor_functions(backend):
             def forward(ctx, a, dim):
                 ctx.save_for_backward(a.shape)
                 if dim is not None:
-                    return TF.add_reduce(a, [dim])
+                    return add_reduce(a, [dim])
                 else:
-                    return TF.add_reduce(a, list(range(a.dims))).view(1)
+                    return add_reduce(a, list(range(a.dims))).view(1)
 
             @staticmethod
             def backward(ctx, grad_output):
@@ -319,20 +325,20 @@ def make_tensor_functions(backend):
                 ctx.save_for_backward(a.shape)
                 assert a._tensor.is_contiguous, "Must be contiguous to view"
                 t = Tensor.make(a._tensor._storage, shape)
-                t.tf = a.tf
+                t.type_(a.tf)
                 return t
 
             @staticmethod
             def backward(ctx, grad_output):
                 original = ctx.saved_values
                 ret = Tensor.make(grad_output._tensor._storage, original)
-                ret.tf = grad_output.tf
+                ret.type_(grad_output.tf)
                 return ret
 
         class Copy(Function):
             @staticmethod
             def forward(ctx, a):
-                return TF.id_map(a)
+                return id_map(a)
 
             @staticmethod
             def backward(ctx, grad_output):
