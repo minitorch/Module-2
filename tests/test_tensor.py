@@ -2,8 +2,7 @@ import minitorch
 import pytest
 from hypothesis import given
 from hypothesis.strategies import floats, lists
-from .strategies import tensors, shaped_tensors
-from minitorch import assert_close
+from .strategies import tensors, shaped_tensors, assert_close
 
 small_floats = floats(min_value=-100, max_value=100, allow_nan=False)
 
@@ -30,7 +29,9 @@ one_arg = [
 
 reduce = [
     ("sum", lambda a: a.sum()),
+    ("mean", lambda a: a.mean()),
     ("sum2", lambda a: a.sum(0)),
+    ("mean2", lambda a: a.mean(0)),
 ]
 two_arg = [("add", lambda a, b: a + b), ("mul", lambda a, b: a * b)]
 

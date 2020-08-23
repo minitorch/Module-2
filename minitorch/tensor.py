@@ -6,8 +6,8 @@ from .autodiff import FunctionBase, Variable
 from . import operators
 import random
 from .tensor_ops import TensorOps
-from .util import assert_close
 from .tensor_data import TensorData
+import numpy as np
 
 
 # Construction
@@ -90,7 +90,7 @@ class Tensor(Variable):
         return self.tf.Mul.apply(self, self.ensure_tensor(b))
 
     def __truediv__(self, b):
-        return self.tf.Mul.apply(self, tensor([1 / b]))
+        return self.tf.Mul.apply(self, self.tf.Inv.apply(self.ensure_tensor(b)))
 
     def __lt__(self, b):
         return self.tf.LT.apply(self, self.ensure_tensor(b))
@@ -109,6 +109,9 @@ class Tensor(Variable):
 
     def log(self):
         return self.tf.Log.apply(self)
+
+    def exp(self):
+        return self.tf.Exp.apply(self)
 
     def sum(self, dim=None):
         return self.tf.Sum.apply(self, dim)
@@ -195,13 +198,16 @@ def make_tensor_functions(backend):
     sigmoid_map = backend.map(operators.sigmoid)
     relu_map = backend.map(operators.relu)
     log_map = backend.map(operators.log)
+    exp_map = backend.map(operators.exp)
     id_map = backend.map(operators.id)
+    inv_map = backend.map(operators.inv)
 
     add_zip = backend.zip(operators.add)
     mul_zip = backend.zip(operators.mul)
     lt_zip = backend.zip(operators.lt)
     relu_back_zip = backend.zip(operators.relu_back)
     log_back_zip = backend.zip(operators.log_back)
+    inv_back_zip = backend.zip(operators.inv_back)
 
     add_reduce = backend.reduce(operators.add)
 
@@ -218,6 +224,17 @@ def make_tensor_functions(backend):
             @staticmethod
             def backward(ctx, grad_output):
                 return neg_map(grad_output)
+
+        class Inv(Function):
+            @staticmethod
+            def forward(ctx, t1):
+                ctx.save_for_backward(t1)
+                return inv_map(t1)
+
+            @staticmethod
+            def backward(ctx, grad_output):
+                t1 = ctx.saved_values
+                return inv_back_zip(t1, grad_output)
 
         class Add(Function):
             @staticmethod
@@ -262,6 +279,17 @@ def make_tensor_functions(backend):
                 raise NotImplementedError('Need to implement for Task 2.3')
 
         class Log(Function):
+            @staticmethod
+            def forward(ctx, a):
+                # TODO: Implement for Task 2.2.
+                raise NotImplementedError('Need to implement for Task 2.2')
+
+            @staticmethod
+            def backward(ctx, grad_output):
+                # TODO: Implement for Task 2.3.
+                raise NotImplementedError('Need to implement for Task 2.3')
+
+        class Exp(Function):
             @staticmethod
             def forward(ctx, a):
                 # TODO: Implement for Task 2.2.
@@ -378,4 +406,4 @@ def grad_check(f, *vals):
     for i, x in enumerate(vals):
         ind = x._tensor.sample()
         check = central_difference(f, *vals, arg=i, ind=ind)
-        assert_close(x.grad[ind], check)
+        np.testing.assert_allclose(x.grad[ind], check, 1e-2, 1e-2)
