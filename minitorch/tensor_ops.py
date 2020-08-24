@@ -85,7 +85,7 @@ def tensor_reduce(fn):
     Higher-order tensor reduce function.
 
     Args:
-        fn: function mapping two floats to float for combine.
+        fn: reduction function mapping two floats to float.
         out (array): storage for `out` tensor.
         out_shape (array): shape for `out` tensor.
         out_strides (array): strides for `out` tensor.
@@ -105,7 +105,7 @@ def tensor_reduce(fn):
     return _reduce
 
 
-def reduce(fn):
+def reduce(fn, start=0.0):
     f = tensor_reduce(fn)
 
     def ret(a, dims=None, out=None):
@@ -115,6 +115,7 @@ def reduce(fn):
                 out_shape[d] = 1
             # Other values when not sum.
             out = a.zeros(tuple(out_shape))
+            out._tensor._storage[:] = start
 
         diff = len(a.shape) - len(out.shape)
 

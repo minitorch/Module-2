@@ -52,13 +52,13 @@ def broadcast_index(big_index, big_shape, shape, out_index):
     """
     Convert an index into a position (see `index_to_position`),
     when the index is from a broadcasted shape. In this case
-    it may be larger or with more dimensions then the `shape`
+    it may be larger or with more dimensions than the `shape`
     given. Additional dimensions may need to be mapped to 0 or
     removed.
 
     Args:
        big_index (array-like): multidimensional index of bigger tensor
-       big_index (array-like): tensor shape of bigger tensor
+       big_shape (array-like): tensor shape of bigger tensor
        shape (array-like): tensor shape of smaller tensor
        out_index (array-like): multidimensional index of smaller tensor
     """

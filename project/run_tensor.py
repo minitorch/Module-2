@@ -9,6 +9,11 @@ HIDDEN = 10
 RATE = 0.5
 
 
+def RParam(*shape):
+    r = 2 * (minitorch.rand(shape) - 0.5)
+    return minitorch.Parameter(r)
+
+
 class Network(minitorch.Module):
     def __init__(self):
         super().__init__()
@@ -25,10 +30,8 @@ class Network(minitorch.Module):
 class Linear(minitorch.Module):
     def __init__(self, in_size, out_size):
         super().__init__()
-        r = minitorch.rand((in_size, out_size))
-        self.weights = minitorch.Parameter(2 * (r - 0.5))
-        r = minitorch.rand((out_size,))
-        self.bias = minitorch.Parameter(2 * (r - 0.5))
+        self.weights = RParam(in_size, out_size)
+        self.bias = RParam(out_size)
         self.out_size = out_size
 
     def forward(self, x):
@@ -39,9 +42,8 @@ class Linear(minitorch.Module):
 model = Network()
 data = DATASET
 
-X = minitorch.tensor([v for x in data.X for v in x], (data.N, 2))
+X = minitorch.tensor_fromlist(data.X)
 y = minitorch.tensor(data.y)
-
 
 losses = []
 for epoch in range(250):
@@ -67,7 +69,7 @@ for epoch in range(250):
     # Update
     for p in model.parameters():
         if p.value.grad is not None:
-            p.update(p.value - 0.5 * (p.value.grad / float(data.N)))
+            p.update(p.value - RATE * (p.value.grad / float(data.N)))
 
     epoch_time = time.time() - start
 

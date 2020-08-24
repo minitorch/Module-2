@@ -35,6 +35,24 @@ def tensor(ls, shape=None):
     return Tensor.make(ls, shape)
 
 
+def tensor_fromlist(ls):
+    def shape(ls):
+        if isinstance(ls, list):
+            return [len(ls)] + shape(ls[0])
+        else:
+            return []
+
+    def flatten(ls):
+        if isinstance(ls, list):
+            return [y for x in ls for y in flatten(x)]
+        else:
+            return [ls]
+
+    cur = flatten(ls)
+    shape = shape(ls)
+    return tensor(cur, tuple(shape))
+
+
 # Tensor class
 class Tensor(Variable):
     def __init__(self, v, back=None, name=None, backend=None):
@@ -70,6 +88,9 @@ class Tensor(Variable):
     def dims(self):
         return self._tensor.dims
 
+    def to_numpy(self):
+        return self.contiguous()._tensor._storage.reshape(self.shape)
+
     def contiguous(self):
         return self.tf.Copy.apply(self)
 
@@ -94,6 +115,9 @@ class Tensor(Variable):
 
     def __lt__(self, b):
         return self.tf.LT.apply(self, self.ensure_tensor(b))
+
+    def __eq__(self, b):
+        return self.tf.EQ.apply(self, self.ensure_tensor(b))
 
     def __gt__(self, b):
         return self.tf.LT.apply(self.ensure_tensor(b), self)
@@ -205,6 +229,7 @@ def make_tensor_functions(backend):
     add_zip = backend.zip(operators.add)
     mul_zip = backend.zip(operators.mul)
     lt_zip = backend.zip(operators.lt)
+    eq_zip = backend.zip(operators.eq)
     relu_back_zip = backend.zip(operators.relu_back)
     log_back_zip = backend.zip(operators.log_back)
     inv_back_zip = backend.zip(operators.inv_back)
@@ -325,6 +350,17 @@ def make_tensor_functions(backend):
                 raise NotImplementedError('Need to implement for Task 2.3')
 
         class LT(Function):
+            @staticmethod
+            def forward(ctx, a, b):
+                # TODO: Implement for Task 2.2.
+                raise NotImplementedError('Need to implement for Task 2.2')
+
+            @staticmethod
+            def backward(ctx, grad_output):
+                # TODO: Implement for Task 2.3.
+                raise NotImplementedError('Need to implement for Task 2.3')
+
+        class EQ(Function):
             @staticmethod
             def forward(ctx, a, b):
                 # TODO: Implement for Task 2.2.

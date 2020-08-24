@@ -6,14 +6,6 @@ from .strategies import tensors, shaped_tensors, assert_close
 
 small_floats = floats(min_value=-100, max_value=100, allow_nan=False)
 
-
-@given(lists(floats(allow_nan=False)))
-def test_create(t1):
-    t2 = minitorch.tensor(t1)
-    for i in range(len(t1)):
-        assert t1[i] == t2[i]
-
-
 v = 4.524423
 one_arg = [
     ("neg", lambda a: -a),
@@ -25,6 +17,7 @@ one_arg = [
     ("sig", lambda a: a.sigmoid()),
     ("log", lambda a: (a + 100000).log()),
     ("relu", lambda a: (a + 2).relu()),
+    ("exp", lambda a: (a - 200).exp()),
 ]
 
 reduce = [
@@ -33,7 +26,18 @@ reduce = [
     ("sum2", lambda a: a.sum(0)),
     ("mean2", lambda a: a.mean(0)),
 ]
-two_arg = [("add", lambda a, b: a + b), ("mul", lambda a, b: a * b)]
+two_arg = [
+    ("add", lambda a, b: a + b),
+    ("mul", lambda a, b: a * b),
+    ("lt", lambda a, b: a < b + v),
+]
+
+
+@given(lists(floats(allow_nan=False)))
+def test_create(t1):
+    t2 = minitorch.tensor(t1)
+    for i in range(len(t1)):
+        assert t1[i] == t2[i]
 
 
 @given(tensors())
@@ -89,3 +93,10 @@ def test_two_grad_broadcast(fn, ts):
     # broadcast check
     minitorch.grad_check(fn[1], t1.sum(0), t2)
     minitorch.grad_check(fn[1], t1, t2.sum(0))
+
+
+def test_fromlist():
+    t = minitorch.tensor_fromlist([[2, 3, 4], [4, 5, 7]])
+    t.shape == (2, 3)
+    t = minitorch.tensor_fromlist([[[2, 3, 4], [4, 5, 7]]])
+    t.shape == (1, 2, 3)
