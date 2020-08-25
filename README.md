@@ -1,4 +1,7 @@
-# Minit Torch Module 2
+# MiniTorch Module 2
+
+<img src="https://minitorch.github.io/_images/match.png" width="100px">
+
 
 * Docs: https://minitorch.github.io/
 
@@ -8,4 +11,6 @@ This module requires `operators.py`, `modules.py`, and `autodiff.py` from Module
 
 * Tests:
 
-> python run_tests.py
+```
+python run_tests.py
+```
