@@ -41,7 +41,7 @@ def count(position, shape, out_index):
        out_index (array): the index corresponding to position
 
     Returns:
-       None : Fills in `index`.
+       None : Fills in `out_index`.
 
     """
     # TODO: Implement for Task 2.1.
@@ -50,8 +50,8 @@ def count(position, shape, out_index):
 
 def broadcast_index(big_index, big_shape, shape, out_index):
     """
-    Convert an index into a position (see `index_to_position`),
-    when the index is from a broadcasted shape. In this case
+    Convert a `big_index` into `big_shape` to a smaller `out_index`
+    into `shape` following broadcasting rules. In this case
     it may be larger or with more dimensions than the `shape`
     given. Additional dimensions may need to be mapped to 0 or
     removed.
@@ -61,6 +61,9 @@ def broadcast_index(big_index, big_shape, shape, out_index):
        big_shape (array-like): tensor shape of bigger tensor
        shape (array-like): tensor shape of smaller tensor
        out_index (array-like): multidimensional index of smaller tensor
+
+    Returns:
+       None : Fills in `out_index`.
     """
     # TODO: Implement for Task 2.4.
     raise NotImplementedError('Need to implement for Task 2.4')

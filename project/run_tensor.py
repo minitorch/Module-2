@@ -24,7 +24,8 @@ class Network(minitorch.Module):
         self.layer3 = Linear(HIDDEN, 1)
 
     def forward(self, x):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        # TODO: Implement for Task 2.5.
+        raise NotImplementedError('Need to implement for Task 2.5')
 
 
 class Linear(minitorch.Module):
