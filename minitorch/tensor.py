@@ -37,13 +37,13 @@ def tensor(ls, shape=None):
 
 def tensor_fromlist(ls):
     def shape(ls):
-        if isinstance(ls, list):
+        if isinstance(ls, (list, tuple)):
             return [len(ls)] + shape(ls[0])
         else:
             return []
 
     def flatten(ls):
-        if isinstance(ls, list):
+        if isinstance(ls, (list, tuple)):
             return [y for x in ls for y in flatten(x)]
         else:
             return [ls]
