@@ -1,3 +1,9 @@
+"""
+Be sure you have the extra requirements installed.
+
+>>> pip install requirements.extra.txt
+"""
+
 import requests
 import networkx as nx
 import minitorch
@@ -7,7 +13,7 @@ import visdom
 ## Create an autodiff expression here.
 def expression():
     x = minitorch.Scalar(10, name="x")
-    y = x + 10.0
+    y = (x + 10.0) * 20 + 6 * 10
     y.name = "y"
     return y
 
@@ -23,11 +29,11 @@ class GraphBuilder:
             return "constant %s" % (x,)
         elif len(x.name) > 15:
             if x.name in self.intermediates:
-                return "h%d" % (self.intermediates[x.name],)
+                return "v%d" % (self.intermediates[x.name],)
             else:
                 self.hid = self.hid + 1
                 self.intermediates[x.name] = self.hid
-                return "h%d" % (self.hid,)
+                return "v%d" % (self.hid,)
         else:
             return x.name
 
@@ -47,7 +53,7 @@ class GraphBuilder:
                 continue
             else:
                 op = "%s (Op %d)" % (cur.history.last_fn.__name__, self.op_id)
-                G.add_node(op)
+                G.add_node(op, shape="square", penwidth=3)
                 G.add_edge(op, self.get_name(cur))
                 self.op_id += 1
                 for input in cur.history.inputs:
@@ -66,9 +72,23 @@ class GraphBuilder:
         return G
 
 
+def make_graph(y):
+    G = GraphBuilder().run(y)
+    G.graph["graph"] = {"rankdir": "LR"}
+    nx.nx_pydot.write_dot(G, "tmp.dot")
+
+    response = requests.get(
+        "https://graphviz.gomix.me/graphviz",
+        dict(layout="dot", format="svg", mode="download", graph=open("tmp.dot").read()),
+    )
+    return response.text
+
+
 def main():
     y = expression()
     G = GraphBuilder().run(y)
+    G.graph["graph"] = {"rankdir": "LR"}
+
     nx.nx_pydot.write_dot(G, "tmp.dot")
 
     response = requests.get(
@@ -82,4 +102,5 @@ def main():
     vis.svg(response.text)
 
 
-main()
+if __name__ == "__main__":
+    main()

@@ -50,7 +50,7 @@ class Variable:
 
     ## IGNORE
     def __hash__(self):
-        return hash(self._name)
+        return hash(self.name)
 
     def _add_deriv(self, val):
         assert self.history.is_leaf(), "Only leaf variables can have derivatives."
@@ -139,7 +139,7 @@ class FunctionBase:
 
     @staticmethod
     def variable(raw, history):
-        pass
+        raise NotImplementedError()
 
     @classmethod
     def apply(cls, *vals):

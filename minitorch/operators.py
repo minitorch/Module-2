@@ -136,7 +136,7 @@ def zipWith(fn):
 
     Returns:
         function : takes two equally sized lists `ls1` and `ls2`, produce a new list by
-        applying fn(x, y) one each pair of elements.
+        applying fn(x, y) on each pair of elements.
 
     """
     raise NotImplementedError('Need to include this file from past assignment.')
