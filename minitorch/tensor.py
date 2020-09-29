@@ -11,6 +11,11 @@ class Tensor(Variable):
     """
     Tensor is a generalization of Scalar in that it is a Variable that
     handles multidimensional arrays.
+
+    Attributes:
+
+        _tensor (:class:`TensorData`) : the tensor data storage
+        backend : backend object used to implement tensor math (see `tensor_functions.py`)
     """
 
     def __init__(self, v, back=None, name=None, backend=None):
@@ -20,17 +25,12 @@ class Tensor(Variable):
         self._tensor = v
         self.backend = backend
 
-    def _new(self, tensor_data):
-        return Tensor(tensor_data, backend=self.backend)
-
-    @staticmethod
-    def make(storage, shape, strides=None, backend=None):
-        return Tensor(TensorData(storage, shape, strides), backend=backend)
-
-    def type_(self, backend):
-        self.backend = backend
-        if backend.cuda:
-            self._tensor.to_cuda_()
+    def to_numpy(self):
+        """
+        Returns:
+             narray : converted to numpy array
+        """
+        return self.contiguous()._tensor._storage.reshape(self.shape)
 
     # Properties
     @property
@@ -57,46 +57,37 @@ class Tensor(Variable):
         """
         return self._tensor.dims
 
-    def to_numpy(self):
-        """
-        Returns:
-             narray : converted to numpy array
-        """
-        return self.contiguous()._tensor._storage.reshape(self.shape)
-
-    def contiguous(self):
-        return self.backend.Copy.apply(self)
-
-    def ensure_tensor(self, b):
+    def _ensure_tensor(self, b):
+        "Turns a python number into a tensor with the same backend."
         if isinstance(b, (int, float)):
             b = Tensor.make([b], (1,), backend=self.backend)
         else:
-            b.type_(self.backend)
+            b._type_(self.backend)
         return b
 
     # Functions
     def __add__(self, b):
-        return self.backend.Add.apply(self, self.ensure_tensor(b))
+        return self.backend.Add.apply(self, self._ensure_tensor(b))
 
     def __sub__(self, b):
-        return self.backend.Add.apply(self, -self.ensure_tensor(b))
+        return self.backend.Add.apply(self, -self._ensure_tensor(b))
 
     def __mul__(self, b):
-        return self.backend.Mul.apply(self, self.ensure_tensor(b))
+        return self.backend.Mul.apply(self, self._ensure_tensor(b))
 
     def __truediv__(self, b):
         return self.backend.Mul.apply(
-            self, self.backend.Inv.apply(self.ensure_tensor(b))
+            self, self.backend.Inv.apply(self._ensure_tensor(b))
         )
 
     def __lt__(self, b):
-        return self.backend.LT.apply(self, self.ensure_tensor(b))
+        return self.backend.LT.apply(self, self._ensure_tensor(b))
 
     def __eq__(self, b):
-        return self.backend.EQ.apply(self, self.ensure_tensor(b))
+        return self.backend.EQ.apply(self, self._ensure_tensor(b))
 
     def __gt__(self, b):
-        return self.backend.LT.apply(self.ensure_tensor(b), self)
+        return self.backend.LT.apply(self._ensure_tensor(b), self)
 
     def __neg__(self):
         return self.backend.Neg.apply(self)
@@ -114,16 +105,24 @@ class Tensor(Variable):
         return self.backend.Exp.apply(self)
 
     def sum(self, dim=None):
+        "Compute the sum over dimension `dim`"
         return self.backend.Sum.apply(self, dim)
 
     def mean(self, dim=None):
+        "Compute the mean over dimension `dim`"
         return self.backend.Mean.apply(self, dim)
 
     def permute(self, *order):
+        "Permute tensor dimensions to *order"
         return self.backend.Permute.apply(self, order)
 
     def view(self, *shape):
+        "Change the shape of the tensor to a new shape with the same size"
         return self.backend.View.apply(self, shape)
+
+    def contiguous(self):
+        "Return a contiguous tensor with the same data"
+        return self.backend.Copy.apply(self)
 
     def __repr__(self):
         return self._tensor.to_string()
@@ -138,7 +137,23 @@ class Tensor(Variable):
     def grad(self):
         return self.derivative
 
+    # Internal methods used for autodiff.
+    def _type_(self, backend):
+        self.backend = backend
+        if backend.cuda:
+            self._tensor.to_cuda_()
+
+    def _new(self, tensor_data):
+        return Tensor(tensor_data, backend=self.backend)
+
+    @staticmethod
+    def make(storage, shape, strides=None, backend=None):
+        "Create a new tensor from data"
+        return Tensor(TensorData(storage, shape, strides), backend=backend)
+
     def expand(self, other):
+        "Method used to allow for backprop over reduce."
+
         if self.shape == other.shape:
             return other
 
@@ -152,7 +167,6 @@ class Tensor(Variable):
         self.backend._add_reduce(buf, out=buf2)
         return buf2
 
-    # Internal
     def zeros(self, shape=None):
         def zero(shape):
             return Tensor.make(
@@ -163,13 +177,12 @@ class Tensor(Variable):
             out = zero(self.shape)
         else:
             out = zero(shape)
-        out.type_(self.backend)
+        out._type_(self.backend)
         return out
 
     def tuple(self):
         return self._tensor.tuple()
 
-    # Extra
     def get_data(self):
         return Tensor(self._tensor, backend=self.backend)
 

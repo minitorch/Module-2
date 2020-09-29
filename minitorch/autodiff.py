@@ -169,7 +169,6 @@ class FunctionBase:
         Implement the derivative chain-rule.
 
         Args:
-            cls (:class:`FunctionBase`): The Function
             ctx (:class:`Context`) : The context from running forward
             inputs (list of args) : The args that were passed to :func:`FunctionBase.apply` (e.g. :math:`x, y`)
             d_output (number) : The `d_output` value in the chain rule.
@@ -195,10 +194,12 @@ def backpropagate(final_variable_with_deriv):
     Runs a breadth-first search on the computation graph in order to
     backpropagate derivatives to the leaves.
 
-    See :doc:`backpropagate` for details on the algorithm
+    See :doc:`backpropagate` for details on the algorithm.
 
     Args:
-       final_variable_with_deriv (:class:`VariableWithDeriv`): The final variable
-           and its derivative that we want to propagate backward to the leaves.
+        final_variable_with_deriv (:class:`VariableWithDeriv`): The final variable
+                and its derivative that we want to propagate backward to the leaves.
+
+    No return. Should write to its results to the derivative values of each leaf.
     """
     raise NotImplementedError('Need to include this file from past assignment.')

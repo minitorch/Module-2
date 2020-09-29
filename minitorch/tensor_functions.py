@@ -196,8 +196,8 @@ def make_tensor_backend(tensor_ops, is_cuda=False):
         class Permute(Function):
             @staticmethod
             def forward(ctx, a, order):
-                # TODO: Implement for Task 2.3.
-                raise NotImplementedError('Need to implement for Task 2.3')
+                # TODO: Implement for Task 2.2.
+                raise NotImplementedError('Need to implement for Task 2.2')
 
             @staticmethod
             def backward(ctx, grad_output):
@@ -214,7 +214,9 @@ def make_tensor_backend(tensor_ops, is_cuda=False):
             @staticmethod
             def backward(ctx, grad_output):
                 original = ctx.saved_values
-                return Tensor.make(grad_output._tensor._storage, original, backend=grad_output.backend)
+                return Tensor.make(
+                    grad_output._tensor._storage, original, backend=grad_output.backend
+                )
 
         class Copy(Function):
             @staticmethod
@@ -246,22 +248,25 @@ def zeros(shape, backend=TensorFunctions):
     return Tensor.make([0] * int(operators.prod(shape)), shape, backend=backend)
 
 
-def rand(shape, backend=TensorFunctions):
+def rand(shape, backend=TensorFunctions, requires_grad=False):
     """
     Produce a random tensor of size `shape`.
 
     Args:
         shape (tuple): shape of tensor
         backend (:class:`Backend`): tensor backend
+        requires_grad (bool): turn on autodifferentiation
 
     Returns:
         :class:`Tensor` : new tensor
     """
     vals = [random.random() for _ in range(int(operators.prod(shape)))]
-    return Tensor.make(vals, shape, backend=backend)
+    tensor = Tensor.make(vals, shape, backend=backend)
+    tensor.requires_grad_(requires_grad)
+    return tensor
 
 
-def tensor(ls, shape=None, backend=TensorFunctions):
+def tensor(ls, shape=None, backend=TensorFunctions, requires_grad=False):
     """
     Produce a tensor with data ls and shape `shape`.
 
@@ -269,22 +274,26 @@ def tensor(ls, shape=None, backend=TensorFunctions):
         ls (list): data for tensor
         shape (tuple): shape of tensor
         backend (:class:`Backend`): tensor backend
+        requires_grad (bool): turn on autodifferentiation
 
     Returns:
         :class:`Tensor` : new tensor
     """
     if not shape:
         shape = (len(ls),)
-    return Tensor.make(ls, shape, backend=backend)
+    tensor = Tensor.make(ls, shape, backend=backend)
+    tensor.requires_grad_(requires_grad)
+    return tensor
 
 
-def tensor_fromlist(ls, backend=TensorFunctions):
+def tensor_fromlist(ls, backend=TensorFunctions, requires_grad=False):
     """
     Produce a tensor with data and shape from ls
 
     Args:
         ls (list): data for tensor
         backend (:class:`Backend`): tensor backend
+        requires_grad (bool): turn on autodifferentiation
 
     Returns:
         :class:`Tensor` : new tensor
@@ -304,7 +313,7 @@ def tensor_fromlist(ls, backend=TensorFunctions):
 
     cur = flatten(ls)
     shape = shape(ls)
-    return tensor(cur, tuple(shape), backend=backend)
+    return tensor(cur, tuple(shape), backend=backend, requires_grad=requires_grad)
 
 
 # Gradient check for tensors

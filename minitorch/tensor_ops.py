@@ -10,7 +10,10 @@ from .tensor_data import (
 
 def tensor_map(fn):
     """
-    Higher-order tensor map function.
+    Higher-order tensor map function ::
+
+      fn_map = tensor_map(fn)
+      fn_map(out, ... )
 
     Args:
         fn: function from float-to-float to apply
@@ -34,7 +37,11 @@ def tensor_map(fn):
 
 def map(fn):
     """
-    Higher-order tensor map function
+    Higher-order tensor map function ::
+
+      fn_map = map(fn)
+      b = fn_map(a)
+
 
     Args:
         fn: function from float-to-float to apply.
@@ -59,7 +66,11 @@ def map(fn):
 
 def tensor_zip(fn):
     """
-    Higher-order tensor zipWith (or map2) function.
+    Higher-order tensor zipWith (or map2) function. ::
+
+      fn_zip = tensor_zip(fn)
+      fn_zip(out, ...)
+
 
     Args:
         fn: function mapping two floats to float to apply
@@ -96,7 +107,10 @@ def tensor_zip(fn):
 
 def zip(fn):
     """
-    Higher-order tensor zip function.
+    Higher-order tensor zip function ::
+
+      fn_zip = zip(fn)
+      c = fn_zip(a, b)
 
     Args:
         fn: function from two floats-to-float to apply
@@ -123,7 +137,10 @@ def zip(fn):
 
 def tensor_reduce(fn):
     """
-    Higher-order tensor reduce function.
+    Higher-order tensor reduce function. ::
+
+      fn_reduce = tensor_reduce(fn)
+      c = fn_reduce(out, ...)
 
     Args:
         fn: reduction function mapping two floats to float
@@ -158,7 +175,11 @@ def tensor_reduce(fn):
 
 def reduce(fn, start=0.0):
     """
-    Higher-order tensor reduce function.
+    Higher-order tensor reduce function. ::
+
+      fn_reduce = reduce(fn)
+      reduced = fn_reduce(a, dims)
+
 
     Args:
         fn: function from two floats-to-float to apply

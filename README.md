@@ -7,7 +7,7 @@
 
 * Overview: https://minitorch.github.io/module2.html
 
-This module requires `operators.py`, `modules.py`, and `autodiff.py` from Module 1
+This module requires `operators.py`, `module.py`, `scalar.py`, and `autodiff.py` from previous modules.
 
 * Tests:
 
