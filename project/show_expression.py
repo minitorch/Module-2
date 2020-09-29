@@ -12,10 +12,12 @@ import visdom
 
 ## Create an autodiff expression here.
 def expression():
-    x = minitorch.Scalar(10, name="x")
-    y = (x + 10.0) * 20 + 6 * 10
-    y.name = "y"
-    return y
+    x = minitorch.Scalar(1., name="x")
+    x_1 = minitorch.Scalar(1., name="x")
+    y = minitorch.Scalar(1., name="y")
+    z = (x * x_1) * y + 10. * x
+    z.name = "z"
+    return z
 
 
 class GraphBuilder:
@@ -40,7 +42,7 @@ class GraphBuilder:
     def run(self, final):
         queue = [[final]]
 
-        G = nx.DiGraph()
+        G = nx.MultiDiGraph()
         G.add_node(self.get_name(final))
 
         while queue:
@@ -56,8 +58,8 @@ class GraphBuilder:
                 G.add_node(op, shape="square", penwidth=3)
                 G.add_edge(op, self.get_name(cur))
                 self.op_id += 1
-                for input in cur.history.inputs:
-                    G.add_edge(self.get_name(input), op)
+                for i, input in enumerate(cur.history.inputs):
+                    G.add_edge(self.get_name(input), op, f"{i}")
 
                 for input in cur.history.inputs:
                     if not isinstance(input, minitorch.Variable):

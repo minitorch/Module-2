@@ -47,7 +47,7 @@ def indices(draw, layout):
 def tensors(
     draw,
     numbers=floats(allow_nan=False, min_value=-100, max_value=100),
-    backend=None,
+    backend=minitorch.TensorFunctions,
     shape=None,
 ):
     td = draw(tensor_data(numbers, shape=shape))
@@ -59,7 +59,7 @@ def shaped_tensors(
     draw,
     n,
     numbers=floats(allow_nan=False, min_value=-100, max_value=100),
-    backend=None,
+    backend=minitorch.TensorFunctions,
 ):
     td = draw(tensor_data(numbers))
     values = []
