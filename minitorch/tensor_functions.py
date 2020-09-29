@@ -28,6 +28,14 @@ def make_tensor_backend(tensor_ops, is_cuda=False):
     """
     Dynamically construct a tensor backend based on a `tensor_ops` object
     that implements map, zip, and reduce higher-order functions.
+
+    Args:
+        tensor_ops (:class:`TensorOps`) : tensor operations object see `tensor_ops.py`
+        is_cuda (bool) : is the operations object CUDA / GPU based
+
+    Returns :
+        backend : a collection of tensor functions
+
     """
     # Maps
     neg_map = tensor_ops.map(operators.neg)
@@ -229,11 +237,11 @@ def zeros(shape, backend=TensorFunctions):
     Produce a zero tensor of size `shape`.
 
     Args:
-       shape (tuple): shape of tensor
-       backend (:class:`Backend`): tensor backend
+        shape (tuple): shape of tensor
+        backend (:class:`Backend`): tensor backend
 
     Returns:
-       :class:`Tensor` : new tensor
+        :class:`Tensor` : new tensor
     """
     return Tensor.make([0] * int(operators.prod(shape)), shape, backend=backend)
 
@@ -243,11 +251,11 @@ def rand(shape, backend=TensorFunctions):
     Produce a random tensor of size `shape`.
 
     Args:
-       shape (tuple): shape of tensor
-       backend (:class:`Backend`): tensor backend
+        shape (tuple): shape of tensor
+        backend (:class:`Backend`): tensor backend
 
     Returns:
-       :class:`Tensor` : new tensor
+        :class:`Tensor` : new tensor
     """
     vals = [random.random() for _ in range(int(operators.prod(shape)))]
     return Tensor.make(vals, shape, backend=backend)
@@ -258,12 +266,12 @@ def tensor(ls, shape=None, backend=TensorFunctions):
     Produce a tensor with data ls and shape `shape`.
 
     Args:
-       ls (list): data for tensor
-       shape (tuple): shape of tensor
-       backend (:class:`Backend`): tensor backend
+        ls (list): data for tensor
+        shape (tuple): shape of tensor
+        backend (:class:`Backend`): tensor backend
 
     Returns:
-       :class:`Tensor` : new tensor
+        :class:`Tensor` : new tensor
     """
     if not shape:
         shape = (len(ls),)
@@ -275,11 +283,11 @@ def tensor_fromlist(ls, backend=TensorFunctions):
     Produce a tensor with data and shape from ls
 
     Args:
-       ls (list): data for tensor
-       backend (:class:`Backend`): tensor backend
+        ls (list): data for tensor
+        backend (:class:`Backend`): tensor backend
 
     Returns:
-       :class:`Tensor` : new tensor
+        :class:`Tensor` : new tensor
     """
 
     def shape(ls):

@@ -1,7 +1,7 @@
 """
 Be sure you have the extra requirements installed.
 
->>> pip install requirements.extra.txt
+>>> pip install -r requirements.extra.txt
 """
 
 import requests
@@ -13,9 +13,8 @@ import visdom
 ## Create an autodiff expression here.
 def expression():
     x = minitorch.Scalar(1., name="x")
-    x_1 = minitorch.Scalar(1., name="x")
     y = minitorch.Scalar(1., name="y")
-    z = (x * x_1) * y + 10. * x
+    z = (x * x) * y + 10. * x
     z.name = "z"
     return z
 

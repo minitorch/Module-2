@@ -8,7 +8,10 @@ from . import operators
 
 
 class Tensor(Variable):
-    ""
+    """
+    Tensor is a generalization of Scalar in that it is a Variable that
+    handles multidimensional arrays.
+    """
 
     def __init__(self, v, back=None, name=None, backend=None):
         assert isinstance(v, TensorData)
@@ -32,17 +35,33 @@ class Tensor(Variable):
     # Properties
     @property
     def shape(self):
+        """
+        Returns:
+             tuple : shape of the tensor
+        """
         return self._tensor.shape
 
     @property
     def size(self):
+        """
+        Returns:
+             int : size of the tensor
+        """
         return self._tensor.size
 
     @property
     def dims(self):
+        """
+        Returns:
+             int : dimensionality of the tensor
+        """
         return self._tensor.dims
 
     def to_numpy(self):
+        """
+        Returns:
+             narray : converted to numpy array
+        """
         return self.contiguous()._tensor._storage.reshape(self.shape)
 
     def contiguous(self):

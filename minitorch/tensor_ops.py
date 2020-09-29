@@ -13,16 +13,16 @@ def tensor_map(fn):
     Higher-order tensor map function.
 
     Args:
-        fn: function from float-to-float to apply.
-        out (array): storage for out tensor.
-        out_shape (array): shape for out tensor.
-        out_strides (array): strides for out tensor.
-        in_storage (array): storage for in tensor.
-        in_shape (array): shape for in tensor.
-        in_strides (array): strides for in tensor.
+        fn: function from float-to-float to apply
+        out (array): storage for out tensor
+        out_shape (array): shape for out tensor
+        out_strides (array): strides for out tensor
+        in_storage (array): storage for in tensor
+        in_shape (array): shape for in tensor
+        in_strides (array): strides for in tensor
 
     Returns:
-       None : Fills in `out`.
+        None : Fills in `out`
     """
 
     def _map(out, out_shape, out_strides, in_storage, in_shape, in_strides):
@@ -34,15 +34,16 @@ def tensor_map(fn):
 
 def map(fn):
     """
-    Higher-order tensor map function.
+    Higher-order tensor map function
 
     Args:
         fn: function from float-to-float to apply.
         a (:class:`TensorData`): tensor to map over
         out (:class:`TensorData`): optional, tensor data to fill in,
-        should broadcast with `a`.
+               should broadcast with `a`
+
     Returns:
-       :class:`TensorData` : new tensor data
+        :class:`TensorData` : new tensor data
     """
 
     f = tensor_map(fn)
@@ -61,22 +62,32 @@ def tensor_zip(fn):
     Higher-order tensor zipWith (or map2) function.
 
     Args:
-        fn: function mapping two floats to float to apply.
-        out (array): storage for `out` tensor.
-        out_shape (array): shape for `out` tensor.
-        out_strides (array): strides for `out` tensor.
-        a_storage (array): storage for `a` tensor.
-        a_shape (array): shape for `a` tensor.
-        a_strides (array): strides for `a` tensor.
-        b_storage (array): storage for `b` tensor.
-        b_shape (array): shape for `b` tensor.
-        b_strides (array): strides for `b` tensor.
+        fn: function mapping two floats to float to apply
+        out (array): storage for `out` tensor
+        out_shape (array): shape for `out` tensor
+        out_strides (array): strides for `out` tensor
+        a_storage (array): storage for `a` tensor
+        a_shape (array): shape for `a` tensor
+        a_strides (array): strides for `a` tensor
+        b_storage (array): storage for `b` tensor
+        b_shape (array): shape for `b` tensor
+        b_strides (array): strides for `b` tensor
 
     Returns:
-       None : Fills in `out`.
+        None : Fills in `out`
     """
 
-    def _zip(out, out_shape, out_strides, a, a_shape, a_strides, b, b_shape, b_strides):
+    def _zip(
+        out,
+        out_shape,
+        out_strides,
+        a_storage,
+        a_shape,
+        a_strides,
+        b_storage,
+        b_shape,
+        b_strides,
+    ):
         # TODO: Implement for Task 2.2.
         raise NotImplementedError('Need to implement for Task 2.2')
 
@@ -88,11 +99,12 @@ def zip(fn):
     Higher-order tensor zip function.
 
     Args:
-        fn: function from two floats-to-float to apply.
+        fn: function from two floats-to-float to apply
         a (:class:`TensorData`): tensor to zip over
         b (:class:`TensorData`): tensor to zip over
+
     Returns:
-       :class:`TensorData` : new tensor data
+        :class:`TensorData` : new tensor data
     """
 
     f = tensor_zip(fn)
@@ -114,22 +126,29 @@ def tensor_reduce(fn):
     Higher-order tensor reduce function.
 
     Args:
-        fn: reduction function mapping two floats to float.
-        out (array): storage for `out` tensor.
-        out_shape (array): shape for `out` tensor.
-        out_strides (array): strides for `out` tensor.
-        a_storage (array): storage for `a` tensor.
-        a_shape (array): shape for `a` tensor.
-        a_strides (array): strides for `a` tensor.
+        fn: reduction function mapping two floats to float
+        out (array): storage for `out` tensor
+        out_shape (array): shape for `out` tensor
+        out_strides (array): strides for `out` tensor
+        a_storage (array): storage for `a` tensor
+        a_shape (array): shape for `a` tensor
+        a_strides (array): strides for `a` tensor
         reduce_shape (array): shape of reduction (1 for dimension kept, shape value for dimensions summed out)
         reduce_size (int): size of reduce shape
 
     Returns:
-       None : Fills in `out`.
+        None : Fills in `out`
     """
 
     def _reduce(
-        out, out_shape, out_strides, a, a_shape, a_strides, reduce_shape, reduce_size
+        out,
+        out_shape,
+        out_strides,
+        a_storage,
+        a_shape,
+        a_strides,
+        reduce_shape,
+        reduce_size,
     ):
         # TODO: Implement for Task 2.2.
         raise NotImplementedError('Need to implement for Task 2.2')
@@ -142,13 +161,13 @@ def reduce(fn, start=0.0):
     Higher-order tensor reduce function.
 
     Args:
-        fn: function from two floats-to-float to apply.
+        fn: function from two floats-to-float to apply
         a (:class:`TensorData`): tensor to reduce over
         dims (list, optional): list of dims to reduce
         out (:class:`TensorData`, optional): tensor to reduce into
 
     Returns:
-       :class:`TensorData` : new tensor data
+        :class:`TensorData` : new tensor data
     """
 
     f = tensor_reduce(fn)
