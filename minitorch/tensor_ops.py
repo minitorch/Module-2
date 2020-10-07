@@ -202,17 +202,16 @@ def reduce(fn, start=0.0):
             out = a.zeros(tuple(out_shape))
             out._tensor._storage[:] = start
 
-        diff = len(a.shape) - len(out.shape)
+        assert len(out.shape) == len(a.shape)
 
         reduce_shape = []
         reduce_size = 1
         for i, s in enumerate(a.shape):
-            if i < diff or out.shape[i - diff] == 1:
+            if out.shape[i] == 1:
                 reduce_shape.append(s)
                 reduce_size *= s
             else:
                 reduce_shape.append(1)
-        assert len(out.shape) == len(a.shape)
         f(*out.tuple(), *a.tuple(), reduce_shape, reduce_size)
         return out
 
