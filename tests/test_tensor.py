@@ -113,10 +113,10 @@ def test_reduce_forward_one_dim():
     # shape (3, 2)
     t = minitorch.tensor_fromlist([[2, 3], [4, 6], [5, 7]])
 
-    # here 0 means to reduce the 0th dim, 3 -> nothing
+    # here 0 means to reduce the 0th dim, 3 -> 1 
     t_summed = t.sum(0)
 
-    # shape (2)
+    # shape (1, 2)
     t_sum_expected = minitorch.tensor_fromlist([[11, 16]])
 
     for ind in t_summed._tensor.indices():
@@ -128,10 +128,10 @@ def test_reduce_forward_one_dim_2():
     # shape (3, 2)
     t = minitorch.tensor_fromlist([[2, 3], [4, 6], [5, 7]])
 
-    # here 1 means reduce the 1st dim, 2 -> nothing
+    # here 1 means reduce the 1st dim, 2 -> 1 
     t_summed_2 = t.sum(1)
 
-    # shape (3)
+    # shape (3, 1)
     t_sum_2_expected = minitorch.tensor_fromlist([[5], [10], [12]])
 
     for ind in t_summed_2._tensor.indices():
