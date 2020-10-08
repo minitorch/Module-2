@@ -9,15 +9,16 @@ small_floats = floats(min_value=-100, max_value=100, allow_nan=False)
 v = 4.524423
 one_arg = [
     ("neg", lambda a: -a),
-    ("addconstant", lambda a: a + v),
-    ("lt", lambda a: a < v),
-    ("subconstant", lambda a: a - v),
-    ("mult", lambda a: 5 * a),
-    ("div", lambda a: a / v),
     ("sig", lambda a: a.sigmoid()),
-    ("log", lambda a: (a + 100000).log()),
-    ("relu", lambda a: (a + 2).relu()),
-    ("exp", lambda a: (a - 200).exp()),
+    # Uncomment for task 2.4
+    #("addconstant", lambda a: a + v),
+    #("lt", lambda a: a < v),
+    #("subconstant", lambda a: a - v),
+    #("mult", lambda a: 5 * a),
+    #("div", lambda a: a / v),
+    #("log", lambda a: (a + 100000).log()),
+    #("relu", lambda a: (a + 2).relu()),
+    #("exp", lambda a: (a - 200).exp()),
 ]
 
 reduce = [
@@ -29,7 +30,8 @@ reduce = [
 two_arg = [
     ("add", lambda a, b: a + b),
     ("mul", lambda a, b: a * b),
-    ("lt", lambda a, b: a < b + v),
+    # Uncomment for task 2.4
+    #("lt", lambda a, b: a < b + v),
 ]
 
 
