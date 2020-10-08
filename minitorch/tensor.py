@@ -156,7 +156,6 @@ class Tensor(Variable):
 
         if self.shape == other.shape:
             return other
-
         shape = TensorData.shape_broadcast(self.shape, other.shape)
         buf = self.zeros(shape)
         self.backend._id_map(other, out=buf)
