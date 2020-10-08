@@ -193,6 +193,7 @@ def reduce(fn, start=0.0):
 
     f = tensor_reduce(fn)
 
+    # START Code Update
     def ret(a, dims=None, out=None):
         old_shape = None
         if out is None:
@@ -228,6 +229,7 @@ def reduce(fn, start=0.0):
         return out
 
     return ret
+    # END Code Update
 
 
 class TensorOps:
