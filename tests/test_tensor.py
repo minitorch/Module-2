@@ -8,30 +8,31 @@ small_floats = floats(min_value=-100, max_value=100, allow_nan=False)
 
 v = 4.524423
 one_arg = [
-    ("neg", lambda a: -a),
-    ("sig", lambda a: a.sigmoid()),
     # Uncomment for task 2.4
-    #("addconstant", lambda a: a + v),
-    #("lt", lambda a: a < v),
-    #("subconstant", lambda a: a - v),
-    #("mult", lambda a: 5 * a),
-    #("div", lambda a: a / v),
-    #("log", lambda a: (a + 100000).log()),
-    #("relu", lambda a: (a + 2).relu()),
-    #("exp", lambda a: (a - 200).exp()),
+    ("neg", lambda a: -a),
+    # ("addconstant", lambda a: a + v),
+    # ("lt", lambda a: a < v),
+    # ("subconstant", lambda a: a - v),
+    # ("mult", lambda a: 5 * a),
+    # ("div", lambda a: a / v),
+    # ("sig", lambda a: a.sigmoid()),
+    # ("log", lambda a: (a + 100000).log()),
+    # ("relu", lambda a: (a + 2).relu()),
+    # ("exp", lambda a: (a - 200).exp()),
 ]
 
 reduce = [
+    # Uncomment for task 2.4
     ("sum", lambda a: a.sum()),
     ("mean", lambda a: a.mean()),
-    ("sum2", lambda a: a.sum(0)),
-    ("mean2", lambda a: a.mean(0)),
+    # ("sum2", lambda a: a.sum(0)),
+    # ("mean2", lambda a: a.mean(0)),
 ]
 two_arg = [
+    # Uncomment for task 2.4
     ("add", lambda a, b: a + b),
     ("mul", lambda a, b: a * b),
-    # Uncomment for task 2.4
-    #("lt", lambda a, b: a < b + v),
+    # ("lt", lambda a, b: a < b + v),
 ]
 
 
@@ -102,3 +103,50 @@ def test_fromlist():
     t.shape == (2, 3)
     t = minitorch.tensor_fromlist([[[2, 3, 4], [4, 5, 7]]])
     t.shape == (1, 2, 3)
+
+
+## Student Submitted Tests
+
+
+@pytest.mark.task2_2
+def test_reduce_forward_one_dim():
+    # shape (3, 2)
+    t = minitorch.tensor_fromlist([[2, 3], [4, 6], [5, 7]])
+
+    # here 0 means to reduce the 0th dim, 3 -> nothing
+    t_summed = t.sum(0)
+
+    # shape (2)
+    t_sum_expected = minitorch.tensor_fromlist([[11, 16]])
+
+    for ind in t_summed._tensor.indices():
+        assert_close(t_summed[ind], t_sum_expected[ind])
+
+
+@pytest.mark.task2_2
+def test_reduce_forward_one_dim_2():
+    # shape (3, 2)
+    t = minitorch.tensor_fromlist([[2, 3], [4, 6], [5, 7]])
+
+    # here 1 means reduce the 1st dim, 2 -> nothing
+    t_summed_2 = t.sum(1)
+
+    # shape (3)
+    t_sum_2_expected = minitorch.tensor_fromlist([[5], [10], [12]])
+
+    for ind in t_summed_2._tensor.indices():
+        assert_close(t_summed_2[ind], t_sum_2_expected[ind])
+
+
+@pytest.mark.task2_2
+def test_reduce_forward_all_dims():
+    # shape (3, 2)
+    t = minitorch.tensor_fromlist([[2, 3], [4, 6], [5, 7]])
+
+    # reduce all dims, (3 -> 1, 2 -> 1)
+    t_summed_all = t.sum()
+
+    # shape (1, 1)
+    t_summed_all_expected = minitorch.tensor_fromlist([27])
+
+    assert_close(t_summed_all[0], t_summed_all_expected[0])

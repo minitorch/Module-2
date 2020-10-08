@@ -150,7 +150,7 @@ def make_tensor_backend(tensor_ops, is_cuda=False):
         class Sum(Function):
             @staticmethod
             def forward(ctx, a, dim):
-                ctx.save_for_backward(a.shape)
+                ctx.save_for_backward(a.shape, dim)
                 if dim is not None:
                     return add_reduce(a, [dim])
                 else:
@@ -158,7 +158,15 @@ def make_tensor_backend(tensor_ops, is_cuda=False):
 
             @staticmethod
             def backward(ctx, grad_output):
-                return grad_output
+                a_shape, dim = ctx.saved_values
+                # START Code Update
+                if dim is None:
+                    out = grad_output.zeros(a_shape)
+                    out._tensor._storage[:] = grad_output[0]
+                    return out
+                else:
+                    return grad_output
+                # END Code Update
 
         class Mean(Function):
             @staticmethod
