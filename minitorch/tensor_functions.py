@@ -216,7 +216,7 @@ def make_tensor_backend(tensor_ops, is_cuda=False):
             @staticmethod
             def forward(ctx, a, shape):
                 ctx.save_for_backward(a.shape)
-                assert a._tensor.is_contiguous, "Must be contiguous to view"
+                assert a._tensor.is_contiguous(), "Must be contiguous to view"
                 return Tensor.make(a._tensor._storage, shape, backend=a.backend)
 
             @staticmethod
