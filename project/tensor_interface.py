@@ -87,11 +87,16 @@ def st_visualize_tensor(
         )
 
     # Map index to highlight since tensor_figure doesn't know about strides
-    highlighted_position = highlighted_index[0]
-    if len(highlighted_index) > 1:
-        highlighted_position += highlighted_index[1] * height * depth
+    st.write("highlighted", highlighted_index)
     if len(highlighted_index) > 2:
-        highlighted_position += highlighted_index[2] * height
+        highlighted_position = highlighted_index[0]
+        highlighted_position += highlighted_index[1] * width
+        highlighted_position += highlighted_index[2] * height * width
+    elif len(highlighted_index) > 1:
+        highlighted_position = highlighted_index[0]
+        highlighted_position += highlighted_index[1] * width
+    else:
+        highlighted_position = highlighted_index[0]
 
     fig = tensor_figure(
         width,
@@ -100,7 +105,7 @@ def st_visualize_tensor(
         highlighted_position,
         f"Storage position: {position_in_storage}, Index: {highlighted_index}",
         # Fix for weirndess in tensor_figure axis
-        axisTitles=(["i", "k", "j"] if len(tensor.shape) > 1 else ["i", "j", "k"]),
+        axisTitles=(["i", "j", "k"] if len(tensor.shape) > 1 else ["i", "j", "k"]),
         show_fig=False,
         slider=False,
     )
