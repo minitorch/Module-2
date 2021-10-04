@@ -55,6 +55,19 @@ def test_permute(data, t1):
     grad_check(permute, t1)
 
 
+def test_grad_size():
+    "Check that extra grad dim is removed (from @WannaFy)"
+    a = tensor([1], requires_grad=True)
+    b = tensor([[1, 1]], requires_grad=True)
+
+    c = (a * b).sum()
+
+    c.backward()
+    assert c.shape == (1,)
+    assert a.shape == a.grad.shape
+    assert b.shape == b.grad.shape
+
+
 @given(tensors())
 @pytest.mark.task2_4
 @pytest.mark.parametrize("fn", red_arg)
