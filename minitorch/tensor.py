@@ -209,7 +209,9 @@ class Tensor(Variable):
             if orig_shape[dim] == 1 and shape != 1:
                 out = self.backend._add_reduce(out, dim)
         assert out.size == self.size, f"{out.shape} {self.shape}"
-        return out
+        # START CODE CHANGE (2021)
+        return Tensor.make(out._tensor._storage, self.shape, backend=self.backend)
+        # END CODE CHANGE (2021)
 
     def zeros(self, shape=None):
         def zero(shape):
