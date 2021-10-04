@@ -210,7 +210,7 @@ class Tensor(Variable):
                 out = self.backend._add_reduce(out, dim)
         assert out.size == self.size, f"{out.shape} {self.shape}"
         # START CODE CHANGE (2021)
-        return out.view(*self.shape)
+        return Tensor.make(out._tensor._storage, self.shape, backend=self.backend)
         # END CODE CHANGE (2021)
 
     def zeros(self, shape=None):
