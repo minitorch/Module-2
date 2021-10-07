@@ -251,7 +251,9 @@ class LT(ScalarFunction):
     @staticmethod
     def forward(ctx, a, b):
         raise NotImplementedError('Need to include this file from past assignment.')
-        raise NotImplementedError('Need to include this file from past assignment.')
+
+    @staticmethod
+    def backward(ctx, d_output):
         raise NotImplementedError('Need to include this file from past assignment.')
 
 

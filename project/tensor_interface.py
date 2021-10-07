@@ -65,18 +65,16 @@ def st_visualize_storage(tensor: Tensor, selected_position: int, max_size=10):
 def st_visualize_tensor(
     tensor: Tensor, highlighted_index, strides=None, show_value=True
 ):
-    width = tensor.shape[0]
-    height = tensor.shape[1] if len(tensor.shape) > 1 else 1
-    depth = tensor.shape[2] if len(tensor.shape) > 2 else 1
+    depth = tensor.shape[0]
+    rows = tensor.shape[1] if len(tensor.shape) > 1 else 1
+    columns = tensor.shape[2] if len(tensor.shape) > 2 else 1
 
     if strides is None:
         strides = tensor._tensor.strides
 
-    if len(tensor.shape) < 3:
+    if len(tensor.shape) != 3:
         # TODO: Fix visualization instead of showing warning
-        st.warning("Tensor with less than 3 dimensions is visualized in 3D")
-    elif len(tensor.shape) > 3:
-        st.error("Can't visualize a tensor with more than 3 dimensions")
+        st.error("Can only visualize a tensor which has 3 dimensions")
         return
 
     position_in_storage = index_to_position(highlighted_index, strides)
@@ -90,22 +88,22 @@ def st_visualize_tensor(
     st.write("highlighted", highlighted_index)
     if len(highlighted_index) > 2:
         highlighted_position = highlighted_index[0]
-        highlighted_position += highlighted_index[1] * width
-        highlighted_position += highlighted_index[2] * height * width
+        highlighted_position += highlighted_index[1] * depth * columns
+        highlighted_position += highlighted_index[2] * depth
     elif len(highlighted_index) > 1:
         highlighted_position = highlighted_index[0]
-        highlighted_position += highlighted_index[1] * width
+        highlighted_position += highlighted_index[1] * depth * columns
     else:
         highlighted_position = highlighted_index[0]
 
     fig = tensor_figure(
-        width,
-        height,
         depth,
+        columns,
+        rows,
         highlighted_position,
         f"Storage position: {position_in_storage}, Index: {highlighted_index}",
         # Fix for weirndess in tensor_figure axis
-        axisTitles=(["i", "j", "k"] if len(tensor.shape) > 1 else ["i", "j", "k"]),
+        axisTitles=["depth (i)", "columns (k)", "rows (j)"],
         show_fig=False,
         slider=False,
     )
