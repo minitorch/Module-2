@@ -9,4 +9,4 @@
 
 This assignment requires the following files from the previous assignments.
 
-        minitorch/operators.py minitorch/module.py minitorch/autodiff.py minitorch/scalar.py minitorch/module.py project/run_manual.py project/run_scalar.py
+        minitorch/operators.py minitorch/module.py minitorch/autodiff.py minitorch/scalar.py project/run_manual.py project/run_scalar.py
