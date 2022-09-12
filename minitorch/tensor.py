@@ -206,10 +206,6 @@ class Tensor:
         assert self.size == 1
         return self[0]
 
-    @property
-    def data(self) -> Tensor:
-        return Tensor(self._tensor, backend=self.backend)
-
     def sum(self, dim: Optional[int] = None) -> Tensor:
         "Compute the sum over dimension `dim`"
         if dim is None:
