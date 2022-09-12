@@ -5,7 +5,7 @@
 
 * Docs: https://minitorch.github.io/
 
-* Overview: https://minitorch.github.io/module2.html
+* Overview: https://minitorch.github.io/module2/module2/
 
 This assignment requires the following files from the previous assignments. You can get these by running
 
