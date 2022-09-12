@@ -22,7 +22,7 @@ class Network(minitorch.Module):
 
     def forward(self, x):
         # TODO: Implement for Task 2.5.
-        raise NotImplementedError('Need to implement for Task 2.5')
+        raise NotImplementedError("Need to implement for Task 2.5")
 
 
 class Linear(minitorch.Module):
@@ -34,7 +34,7 @@ class Linear(minitorch.Module):
 
     def forward(self, x):
         # TODO: Implement for Task 2.5.
-        raise NotImplementedError('Need to implement for Task 2.5')
+        raise NotImplementedError("Need to implement for Task 2.5")
 
 
 def default_log_fn(epoch, total_loss, correct, losses):
