@@ -268,8 +268,8 @@ def tensor_map(fn: Callable[[float], float]) -> Any:
         in_shape: Shape,
         in_strides: Strides,
     ) -> None:
-        # TODO: Implement for Task 2.2.
-        raise NotImplementedError("Need to implement for Task 2.2")
+        # TODO: Implement for Task 2.3.
+        raise NotImplementedError("Need to implement for Task 2.3")
 
     return _map
 
@@ -318,8 +318,8 @@ def tensor_zip(fn: Callable[[float, float], float]) -> Any:
         b_shape: Shape,
         b_strides: Strides,
     ) -> None:
-        # TODO: Implement for Task 2.2.
-        raise NotImplementedError("Need to implement for Task 2.2")
+        # TODO: Implement for Task 2.3.
+        raise NotImplementedError("Need to implement for Task 2.3")
 
     return _zip
 
@@ -354,8 +354,8 @@ def tensor_reduce(fn: Callable[[float, float], float]) -> Any:
         a_strides: Strides,
         reduce_dim: int,
     ) -> None:
-        # TODO: Implement for Task 2.2.
-        raise NotImplementedError("Need to implement for Task 2.2")
+        # TODO: Implement for Task 2.3.
+        raise NotImplementedError("Need to implement for Task 2.3")
 
     return _reduce
 
