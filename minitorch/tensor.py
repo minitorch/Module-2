@@ -115,6 +115,7 @@ class Tensor:
         return c
 
     def item(self) -> float:
+        """Convert a 1-element tensor to a float"""
         assert self.size == 1
         x: float = self._tensor._storage[0]
         return x
@@ -159,11 +160,11 @@ class Tensor:
         is a different size than the input of `forward`.
 
 
-        Parameters
-        ----------
+        Args:
+        ----
             other : backward tensor (must broadcast with self)
 
-        Returns
+        Returns:
         -------
             Expanded version of `other` with the right derivatives
 
@@ -204,9 +205,11 @@ class Tensor:
         return out
 
     def tuple(self) -> Tuple[Storage, Shape, Strides]:
+        """Get the tensor data info as a tuple."""
         return self._tensor.tuple()
 
     def detach(self) -> Tensor:
+        """Detach from backprop"""
         return Tensor(self._tensor, backend=self.backend)
 
     # Variable elements for backprop

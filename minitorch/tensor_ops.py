@@ -28,9 +28,6 @@ class TensorOps:
     def map(fn: Callable[[float], float]) -> MapProto: ...
 
     @staticmethod
-    def cmap(fn: Callable[[float], float]) -> Callable[[Tensor, Tensor], Tensor]: ...
-
-    @staticmethod
     def zip(
         fn: Callable[[float, float], float],
     ) -> Callable[[Tensor, Tensor], Tensor]: ...
@@ -42,6 +39,7 @@ class TensorOps:
 
     @staticmethod
     def matrix_multiply(a: Tensor, b: Tensor) -> Tensor:
+        """Matrix multiply"""
         raise NotImplementedError("Not implemented in this assignment")
 
     cuda = False
@@ -68,7 +66,6 @@ class TensorBackend:
         self.log_map = ops.map(operators.log)
         self.exp_map = ops.map(operators.exp)
         self.id_map = ops.map(operators.id)
-        self.id_cmap = ops.cmap(operators.id)
         self.inv_map = ops.map(operators.inv)
 
         # Zips
