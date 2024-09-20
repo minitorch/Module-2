@@ -15,17 +15,19 @@ import shutil
 import sys
 
 if len(sys.argv) != 3:
-    print('Invalid argument count! Please pass source directory and destination directory after the file name')
+    print(
+        "Invalid argument count! Please pass source directory and destination directory after the file name"
+    )
     sys.exit()
 
 # Get the users path to evaluate the username and root directory
 current_path = os.getcwd()
-grandparent_path = '/'.join(current_path.split('/')[:-1])
+grandparent_path = "/".join(current_path.split("/")[:-1])
 
-print('Looking for modules in : ', grandparent_path)
+print("Looking for modules in : ", grandparent_path)
 
 # List of files which we want to move
-f = open('files_to_sync.txt', 'r+')
+f = open("files_to_sync.txt", "r+")
 files_to_move = f.read().splitlines()
 f.close()
 
@@ -36,11 +38,13 @@ dest = sys.argv[2]
 # copy the files from source to destination
 try:
     for file in files_to_move:
-        print(f"Moving file : {file}")
+        print(f"Moving file : ", file)
         shutil.copy(
             os.path.join(grandparent_path, source, file),
             os.path.join(grandparent_path, dest, file),
         )
     print(f"Finished moving {len(files_to_move)} files")
-except Exception:
-    print("Something went wrong! please check if the source and destination folders are present in same folder")
+except Exception as e:
+    print(
+        "Something went wrong! please check if the source and destination folders are present in same folder"
+    )

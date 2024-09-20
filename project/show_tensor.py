@@ -49,7 +49,6 @@ def plot_matrix(x, y, title, w=300, h=500, bg="white"):
 
 
 def plot_map():
-
     data = [
         go.Scatter(
             hoverinfo="skip",
@@ -118,7 +117,6 @@ def plot_map():
 
 
 def plot_zip():
-
     data = [
         go.Scatter(
             hoverinfo="skip",
@@ -193,7 +191,6 @@ def plot_zip():
 
 
 def plot_reduce():
-
     data = [
         go.Scatter(
             hoverinfo="skip",
@@ -286,7 +283,6 @@ def plot_tensor(x, y, z, active=5):
         for z in list(range(shape[2])):
             for y in list(range(shape[1])):
                 for x in list(range(shape[0])):
-
                     coords.append([x, y, z])
         return np.array(coords) * 1.1
 
@@ -294,7 +290,6 @@ def plot_tensor(x, y, z, active=5):
 
     # Construct one 3d mesh box
     def add_one_box(ind, xs, ys, zs, name, alpha=1.0):
-
         # Build triangles from tensor coordinates
         i = [7, 0, 0, 0, 4, 4, 6, 6, 4, 0, 3, 2]
         j = [3, 4, 1, 2, 5, 6, 5, 2, 0, 1, 6, 3]
@@ -337,7 +332,6 @@ def plot_tensor(x, y, z, active=5):
 
     # Add boxes to fig
     def box_adder(boxes):
-
         # Construct boxes from tensor coordinates
         def construct_whole_box(initXYZ):
             for ind, i in enumerate(initXYZ):
@@ -383,7 +377,7 @@ def plot_tensor(x, y, z, active=5):
                 str((np.array([i[0], i[2], i[1]]) / (1.1)).astype(int))
                 .replace(" ", ",")
                 .replace("[", "(")
-                .replace("]", ")")
+                .replace("]", ")"),
             )
 
     box_adder(tensor_coords)

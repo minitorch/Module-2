@@ -14,7 +14,7 @@ one_arg, two_arg, red_arg = MathTestVariable._comp_testing()
 
 @given(lists(small_floats, min_size=1))
 def test_create(t1: List[float]) -> None:
-    "Test the ability to create an index a 1D Tensor"
+    """Test the ability to create an index a 1D Tensor"""
     t2 = tensor(t1)
     for i in range(len(t1)):
         assert t1[i] == t2[i]
@@ -26,7 +26,7 @@ def test_create(t1: List[float]) -> None:
 def test_one_args(
     fn: Tuple[str, Callable[[float], float], Callable[[Tensor], Tensor]], t1: Tensor
 ) -> None:
-    "Test one-arg functions compared to floats"
+    """Test one-arg functions compared to floats"""
     name, base_fn, tensor_fn = fn
     t2 = tensor_fn(t1)
     for ind in t2._tensor.indices():
@@ -53,7 +53,7 @@ def test_two_args(
 def test_one_derivative(
     fn: Tuple[str, Callable[[float], float], Callable[[Tensor], Tensor]], t1: Tensor
 ) -> None:
-    "Test the gradient of a one-arg tensor function"
+    """Test the gradient of a one-arg tensor function"""
     name, _, tensor_fn = fn
     grad_check(tensor_fn, t1)
 
@@ -61,7 +61,7 @@ def test_one_derivative(
 @given(data(), tensors())
 @pytest.mark.task2_4
 def test_permute(data: DataObject, t1: Tensor) -> None:
-    "Test the permute function"
+    """Test the permute function"""
     permutation = data.draw(permutations(range(len(t1.shape))))
 
     def permute(a: Tensor) -> Tensor:
@@ -71,7 +71,7 @@ def test_permute(data: DataObject, t1: Tensor) -> None:
 
 
 def test_grad_size() -> None:
-    "Test the size of the gradient (from @WannaFy)"
+    """Test the size of the gradient (from @WannaFy)"""
     a = tensor([1], requires_grad=True)
     b = tensor([[1, 1]], requires_grad=True)
 
@@ -92,7 +92,7 @@ def test_grad_reduce(
     fn: Tuple[str, Callable[[Iterable[float]], float], Callable[[Tensor], Tensor]],
     t1: Tensor,
 ) -> None:
-    "Test the grad of a tensor reduce"
+    """Test the grad of a tensor reduce"""
     name, _, tensor_fn = fn
     grad_check(tensor_fn, t1)
 
@@ -116,7 +116,7 @@ def test_two_grad_broadcast(
     fn: Tuple[str, Callable[[float, float], float], Callable[[Tensor, Tensor], Tensor]],
     ts: Tuple[Tensor, Tensor],
 ) -> None:
-    "Test the grad of a two argument function"
+    """Test the grad of a two argument function"""
     name, base_fn, tensor_fn = fn
     t1, t2 = ts
     grad_check(tensor_fn, t1, t2)
@@ -127,7 +127,7 @@ def test_two_grad_broadcast(
 
 
 def test_fromlist() -> None:
-    "Test longer from list conversion"
+    """Test longer from list conversion"""
     t = tensor([[2, 3, 4], [4, 5, 7]])
     assert t.shape == (2, 3)
     t = tensor([[[2, 3, 4], [4, 5, 7]]])
@@ -135,7 +135,7 @@ def test_fromlist() -> None:
 
 
 def test_view() -> None:
-    "Test view"
+    """Test view"""
     t = tensor([[2, 3, 4], [4, 5, 7]])
     assert t.shape == (2, 3)
     t2 = t.view(6)
@@ -150,7 +150,7 @@ def test_view() -> None:
 
 @given(tensors())
 def test_back_view(t1: Tensor) -> None:
-    "Test the graident of view"
+    """Test the graident of view"""
 
     def view(a: Tensor) -> Tensor:
         a = a.contiguous()
