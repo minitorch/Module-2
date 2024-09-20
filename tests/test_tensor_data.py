@@ -14,7 +14,7 @@ from .tensor_strategies import indices, tensor_data
 
 @pytest.mark.task2_1
 def test_layout() -> None:
-    "Test basis properties of layout and strides"
+    """Test basis properties of layout and strides"""
     data = [0] * 3 * 5
     tensor_data = minitorch.TensorData(data, (3, 5), (5, 1))
 
@@ -34,7 +34,7 @@ def test_layout() -> None:
 
 @pytest.mark.xfail
 def test_layout_bad() -> None:
-    "Test basis properties of layout and strides"
+    """Test basis properties of layout and strides"""
     data = [0] * 3 * 5
     minitorch.TensorData(data, (3, 5), (6,))
 
@@ -42,7 +42,7 @@ def test_layout_bad() -> None:
 @pytest.mark.task2_1
 @given(tensor_data())
 def test_enumeration(tensor_data: TensorData) -> None:
-    "Test enumeration of tensor_datas."
+    """Test enumeration of tensor_datas."""
     indices = list(tensor_data.indices())
 
     # Check that enough positions are enumerated.
@@ -60,7 +60,7 @@ def test_enumeration(tensor_data: TensorData) -> None:
 @pytest.mark.task2_1
 @given(tensor_data())
 def test_index(tensor_data: TensorData) -> None:
-    "Test enumeration of tensor_data."
+    """Test enumeration of tensor_data."""
     # Check that all indices are within the size.
     for ind in tensor_data.indices():
         pos = tensor_data.index(ind)
@@ -81,7 +81,7 @@ def test_index(tensor_data: TensorData) -> None:
 @given(data())
 def test_permute(data: DataObject) -> None:
     td = data.draw(tensor_data())
-    ind = data.draw(indices(td))
+    ind = data.draw(indices(minitorch.Tensor(td)))
     td_rev = td.permute(*list(reversed(range(td.dims))))
     assert td.index(ind) == td_rev.index(tuple(reversed(ind)))
 

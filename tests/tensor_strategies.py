@@ -106,7 +106,6 @@ def matmul_tensors(
         allow_nan=False, min_value=-100, max_value=100
     ),
 ) -> List[Tensor]:
-
     i, j, k = [draw(integers(min_value=1, max_value=10)) for _ in range(3)]
 
     l1 = (i, j)
