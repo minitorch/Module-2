@@ -6,6 +6,8 @@ import minitorch
 from minitorch import TensorData
 
 from .tensor_strategies import indices, tensor_data
+from minitorch.tensor_ops import SimpleBackend
+
 
 # ## Tasks 2.1
 
@@ -81,7 +83,7 @@ def test_index(tensor_data: TensorData) -> None:
 @given(data())
 def test_permute(data: DataObject) -> None:
     td = data.draw(tensor_data())
-    ind = data.draw(indices(minitorch.Tensor(td)))
+    ind = data.draw(indices(minitorch.Tensor(td, backend=SimpleBackend)))
     td_rev = td.permute(*list(reversed(range(td.dims))))
     assert td.index(ind) == td_rev.index(tuple(reversed(ind)))
 
