@@ -4,5 +4,6 @@ minitorch/autodiff.py
 minitorch/scalar.py
 minitorch/scalar_functions.py
 minitorch/module.py
+minitorch/datasets.py
 project/run_manual.py
 project/run_scalar.py
