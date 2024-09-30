@@ -20,17 +20,23 @@ if TYPE_CHECKING:
 
 
 class MapProto(Protocol):
-    def __call__(self, x: Tensor, out: Optional[Tensor] = ..., /) -> Tensor: ...
+    def __call__(self, x: Tensor, out: Optional[Tensor] = ..., /) -> Tensor:
+        """Call a map function"""
+        ...
 
 
 class TensorOps:
     @staticmethod
-    def map(fn: Callable[[float], float]) -> MapProto: ...
+    def map(fn: Callable[[float], float]) -> MapProto:
+        """Map placeholder"""
+        ...
 
     @staticmethod
     def zip(
         fn: Callable[[float, float], float],
-    ) -> Callable[[Tensor, Tensor], Tensor]: ...
+    ) -> Callable[[Tensor, Tensor], Tensor]:
+        """Zip placeholder"""
+        ...
 
     @staticmethod
     def reduce(
@@ -219,6 +225,7 @@ class SimpleOps(TensorOps):
 
     @staticmethod
     def matrix_multiply(a: "Tensor", b: "Tensor") -> "Tensor":
+        """Matrix multiplication"""
         raise NotImplementedError("Not implemented in this assignment")
 
     is_cuda = False

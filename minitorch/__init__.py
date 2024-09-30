@@ -9,4 +9,5 @@ from .testing import *  # noqa: F401,F403
 from .module import *  # noqa: F401,F403
 from .autodiff import *  # noqa: F401,F403
 from .scalar import *  # noqa: F401,F403
+from .scalar_functions import *  # noqa: F401,F403
 from .module import *  # noqa: F401,F403

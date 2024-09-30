@@ -263,6 +263,15 @@ class Tensor:
             grad_output = Tensor.make([1.0], (1,), backend=self.backend)
         backpropagate(self, grad_output)
 
+    def __truediv__(self, b: TensorLike) -> Tensor:
+        return Mul.apply(self, Inv.apply(self._ensure_tensor(b)))
+
+    def __rtruediv__(self, b: TensorLike) -> Tensor:
+        return Mul.apply(self._ensure_tensor(b), Inv.apply(self))
+
+    def __matmul__(self, b: Tensor) -> Tensor:
+        """Not used until Module 3"""
+        return MatMul.apply(self, b)
+
     # Functions
     # TODO: Implement for Task 2.3.
-    raise NotImplementedError("Need to implement for Task 2.3")

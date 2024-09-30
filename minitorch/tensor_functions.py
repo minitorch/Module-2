@@ -95,6 +95,16 @@ class Add(Function):
         return grad_output, grad_output
 
 
+class All(Function):
+    @staticmethod
+    def forward(ctx: Context, a: Tensor, dim: Tensor) -> Tensor:
+        """Return 1 if all are true"""
+        if dim is not None:
+            return a.f.mul_reduce(a, int(dim.item()))
+        else:
+            return a.f.mul_reduce(a.contiguous().view(int(operators.prod(a.shape))), 0)
+
+
 # TODO: Implement for Task 2.3.
 
 

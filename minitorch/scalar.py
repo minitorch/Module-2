@@ -116,6 +116,7 @@ class Scalar:
 
     @property
     def parents(self) -> Iterable[Variable]:
+        """Get the variables used to create this one."""
         assert self.history is not None
         return self.history.inputs
 

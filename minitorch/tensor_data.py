@@ -114,7 +114,7 @@ def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
 
 
 def strides_from_shape(shape: UserShape) -> UserStrides:
-    "Return a contiguous stride for a shape"
+    """Return a contiguous stride for a shape"""
     layout = [1]
     offset = 1
     for s in reversed(shape):
@@ -158,6 +158,7 @@ class TensorData:
         assert len(self._storage) == self.size
 
     def to_cuda_(self) -> None:  # pragma: no cover
+        """Convert to cuda"""
         if not numba.cuda.is_cuda_array(self._storage):
             self._storage = numba.cuda.to_device(self._storage)
 
@@ -211,6 +212,7 @@ class TensorData:
             yield tuple(out_index)
 
     def sample(self) -> UserIndex:
+        """Get a random valid index"""
         return tuple((random.randint(0, s - 1) for s in self.shape))
 
     def get(self, key: UserIndex) -> float:
@@ -221,6 +223,7 @@ class TensorData:
         self._storage[self.index(key)] = val
 
     def tuple(self) -> Tuple[Storage, Shape, Strides]:
+        """Return core tensor data as a tuple."""
         return (self._storage, self._shape, self._strides)
 
     def permute(self, *order: int) -> TensorData:
@@ -243,6 +246,7 @@ class TensorData:
         raise NotImplementedError("Need to implement for Task 2.1")
 
     def to_string(self) -> str:
+        """Convert to string"""
         s = ""
         for index in self.indices():
             l = ""
