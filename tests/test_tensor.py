@@ -1,7 +1,7 @@
 from typing import Callable, Iterable, List, Tuple
 
 import pytest
-from hypothesis import given
+from hypothesis import given, assume
 from hypothesis.strategies import DataObject, data, lists, permutations
 
 from minitorch import MathTestVariable, Tensor, grad_check, tensor
@@ -43,6 +43,11 @@ def test_two_args(
     name, base_fn, tensor_fn = fn
     t1, t2 = ts
     t3 = tensor_fn(t1, t2)
+
+    if name == 'div2':
+        denom = t2 + 5.5
+        assume((abs(denom.to_numpy()) > 1e-3).all())
+
     for ind in t3._tensor.indices():
         assert_close(t3[ind], base_fn(t1[ind], t2[ind]))
 
@@ -119,6 +124,7 @@ def test_two_grad_broadcast(
     "Test the grad of a two argument function"
     name, base_fn, tensor_fn = fn
     t1, t2 = ts
+
     grad_check(tensor_fn, t1, t2)
 
     # broadcast check

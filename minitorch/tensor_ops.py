@@ -268,8 +268,31 @@ def tensor_map(fn: Callable[[float], float]) -> Any:
         in_shape: Shape,
         in_strides: Strides,
     ) -> None:
-        # TODO: Implement for Task 2.3.
-        raise NotImplementedError("Need to implement for Task 2.3")
+        # Simple case: same shapes and strides
+        if (
+            len(out_strides) == len(in_strides) 
+            and (out_strides == in_strides).all()
+            and (out_shape == in_shape).all()
+        ):
+            # Direct element-wise application
+            for i in range(len(out)):
+                out[i] = fn(in_storage[i])
+        else:
+            # Handle broadcasting
+            for i in range(len(out)):
+                # Convert to multidimensional index
+                out_idx = np.zeros(len(out_shape), dtype=np.int32)
+                to_index(i, out_shape, out_idx)
+                
+                # Map to input index
+                in_idx = np.zeros(len(in_shape), dtype=np.int32)
+                broadcast_index(out_idx, out_shape, in_shape, in_idx)
+                
+                # Get position in input storage
+                in_pos = index_to_position(in_idx, in_strides)
+                
+                # Apply function
+                out[i] = fn(in_storage[in_pos])
 
     return _map
 
@@ -318,8 +341,36 @@ def tensor_zip(fn: Callable[[float, float], float]) -> Any:
         b_shape: Shape,
         b_strides: Strides,
     ) -> None:
-        # TODO: Implement for Task 2.3.
-        raise NotImplementedError("Need to implement for Task 2.3")
+        # Simple case: all shapes match
+        if (
+            len(out_strides) == len(a_strides) == len(b_strides)
+            and (out_strides == a_strides).all()
+            and (out_strides == b_strides).all()
+            and (out_shape == a_shape).all()
+            and (out_shape == b_shape).all()
+        ):
+            # Direct element-wise operation
+            for i in range(len(out)):
+                out[i] = fn(a_storage[i], b_storage[i])
+        else:
+            # Handle broadcasting
+            for i in range(len(out)):
+                # Convert to multidimensional index
+                out_idx = np.zeros(len(out_shape), dtype=np.int32)
+                to_index(i, out_shape, out_idx)
+                
+                # Map to input indices
+                a_idx = np.zeros(len(a_shape), dtype=np.int32)
+                b_idx = np.zeros(len(b_shape), dtype=np.int32)
+                broadcast_index(out_idx, out_shape, a_shape, a_idx)
+                broadcast_index(out_idx, out_shape, b_shape, b_idx)
+                
+                # Get positions in input storages
+                a_pos = index_to_position(a_idx, a_strides)
+                b_pos = index_to_position(b_idx, b_strides) 
+                
+                # Apply function
+                out[i] = fn(a_storage[a_pos], b_storage[b_pos])
 
     return _zip
 
@@ -354,8 +405,26 @@ def tensor_reduce(fn: Callable[[float, float], float]) -> Any:
         a_strides: Strides,
         reduce_dim: int,
     ) -> None:
-        # TODO: Implement for Task 2.3.
-        raise NotImplementedError("Need to implement for Task 2.3")
+        # Process all output positions
+        for i in range(len(out)):
+            # Convert to multidimensional index
+            out_idx = np.zeros(len(out_shape), dtype=np.int32)
+            to_index(i, out_shape, out_idx)
+            
+            # Reduce along specified dimension
+            for j in range(a_shape[reduce_dim]):
+                # Create input index
+                a_idx = out_idx.copy()
+                a_idx[reduce_dim] = j
+                
+                # Get input position
+                a_pos = index_to_position(a_idx, a_strides)
+                
+                # Apply reduction
+                if j == 0:
+                    out[i] = a_storage[a_pos]
+                else:
+                    out[i] = fn(out[i], a_storage[a_pos])
 
     return _reduce
 

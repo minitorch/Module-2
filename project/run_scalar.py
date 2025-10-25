@@ -6,20 +6,25 @@ import random
 
 import minitorch
 
+from typing import Callable, Any
+
+
 
 class Network(minitorch.Module):
-    def __init__(self, hidden_layers):
+    def __init__(self, hidden_layers: int):
         super().__init__()
-        raise NotImplementedError("Need to include this file from past assignment.")
+        self.layer1 = Linear(2, hidden_layers)
+        self.layer2 = Linear(hidden_layers, hidden_layers)
+        self.layer3 = Linear(hidden_layers, 1)
 
-    def forward(self, x):
+    def forward(self, x: list[minitorch.Scalar]):
         middle = [h.relu() for h in self.layer1.forward(x)]
         end = [h.relu() for h in self.layer2.forward(middle)]
         return self.layer3.forward(end)[0].sigmoid()
 
 
 class Linear(minitorch.Module):
-    def __init__(self, in_size, out_size):
+    def __init__(self, in_size: int, out_size: int):
         super().__init__()
         self.weights = []
         self.bias = []
@@ -38,25 +43,30 @@ class Linear(minitorch.Module):
                 )
             )
 
-    def forward(self, inputs):
-        raise NotImplementedError("Need to include this file from past assignment.")
+    def forward(self, inputs: list[minitorch.Scalar]):
+        y = [b.value for b in self.bias]
+        for i, x in enumerate(inputs):
+            for j in range(len(y)):
+                y[j] = y[j] + x * self.weights[i][j].value
+        return y
 
 
-def default_log_fn(epoch, total_loss, correct, losses):
+
+def default_log_fn(epoch : int, total_loss: float, correct: int, losses: list[float]):
     print("Epoch ", epoch, " loss ", total_loss, "correct", correct)
 
 
 class ScalarTrain:
-    def __init__(self, hidden_layers):
+    def __init__(self, hidden_layers: int):
         self.hidden_layers = hidden_layers
         self.model = Network(self.hidden_layers)
 
-    def run_one(self, x):
+    def run_one(self, x: tuple[float, float]):
         return self.model.forward(
-            (minitorch.Scalar(x[0], name="x_1"), minitorch.Scalar(x[1], name="x_2"))
+            [minitorch.Scalar(x[0], name="x_1"), minitorch.Scalar(x[1], name="x_2")]
         )
 
-    def train(self, data, learning_rate, max_epochs=500, log_fn=default_log_fn):
+    def train(self, data: Any, learning_rate: float, max_epochs: int = 500, log_fn: Callable[[int, float, int, list[float]], None] = default_log_fn):
         self.learning_rate = learning_rate
         self.max_epochs = max_epochs
         self.model = Network(self.hidden_layers)
@@ -75,7 +85,7 @@ class ScalarTrain:
                 y = data.y[i]
                 x_1 = minitorch.Scalar(x_1)
                 x_2 = minitorch.Scalar(x_2)
-                out = self.model.forward((x_1, x_2))
+                out = self.model.forward([x_1, x_2])
 
                 if y == 1:
                     prob = out
@@ -101,5 +111,6 @@ if __name__ == "__main__":
     PTS = 50
     HIDDEN = 2
     RATE = 0.5
-    data = minitorch.datasets["Simple"](PTS)
+    print(list(minitorch.datasets.keys()))
+    data = minitorch.datasets["Simple"](PTS) # minitorch.datasets["Xor"](PTS)
     ScalarTrain(HIDDEN).train(data, RATE)

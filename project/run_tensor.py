@@ -4,6 +4,7 @@ Be sure you have minitorch installed in you Virtual Env.
 """
 
 import minitorch
+import random
 
 
 def RParam(*shape):
@@ -21,8 +22,12 @@ class Network(minitorch.Module):
         self.layer3 = Linear(hidden_layers, 1)
 
     def forward(self, x):
-        # TODO: Implement for Task 2.5.
-        raise NotImplementedError("Need to implement for Task 2.5")
+        """Network forward pass"""
+        # Three layer network with ReLU and sigmoid
+        h1 = self.layer1.forward(x).relu()
+        h2 = self.layer2.forward(h1).relu()
+        output = self.layer3.forward(h2).sigmoid() 
+        return output
 
 
 class Linear(minitorch.Module):
@@ -33,9 +38,28 @@ class Linear(minitorch.Module):
         self.out_size = out_size
 
     def forward(self, x):
-        # TODO: Implement for Task 2.5.
-        raise NotImplementedError("Need to implement for Task 2.5")
-
+        """Linear layer forward pass"""
+        # Handle single sample
+        if len(x.shape) == 1:
+            x = x.view(1, x.shape[0])
+        
+        batch_size, in_features = x.shape
+        
+        # Expand dimensions for broadcasting
+        x_exp = x.view(batch_size, in_features, 1)
+        w_exp = self.weights.value.view(1, in_features, self.out_size)
+        
+        # Compute weighted products
+        products = x_exp * w_exp
+        
+        # Sum over input features
+        output = products.sum(1)
+        output = output.view(batch_size, self.out_size)
+        
+        # Add bias
+        output = output + self.bias.value
+        
+        return output
 
 def default_log_fn(epoch, total_loss, correct, losses):
     print("Epoch ", epoch, " loss ", total_loss, "correct", correct)

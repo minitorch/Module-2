@@ -1,0 +1,67 @@
+name: Autograding Tests
+'on':
+- workflow_dispatch
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Setup
+      id: setup
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Setup
+        setup-command: sudo -H pip3 install -qr requirements.txt; sudo -H pip3 install
+          flake8==5.0.4
+        command: flake8 --ignore "N801, E203, E266, E501, W503, F812, E741, N803,
+          N802, N806" minitorch/ tests/ project/; mypy minitorch/*
+        timeout: 10
+    - name: Task 2.1
+      id: task-2-1
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Task 2.1
+        setup-command: sudo -H pip3 install -qr requirements.txt
+        command: pytest -m task2_1
+        timeout: 10
+    - name: Task 2.2
+      id: task-2-2
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Task 2.2
+        setup-command: sudo -H pip3 install -qr requirements.txt
+        command: pytest -m task2_2
+        timeout: 10
+    - name: Task 2.3
+      id: task-2-3
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Task 2.3
+        setup-command: sudo -H pip3 install -qr requirements.txt
+        command: pytest -m task2_3
+        timeout: 10
+    - name: Task 2.4
+      id: task-2-4
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Task 2.4
+        setup-command: sudo -H pip3 install -qr requirements.txt
+        command: pytest -m task2_4
+        timeout: 10
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        SETUP_RESULTS: "${{steps.setup.outputs.result}}"
+        TASK-2-1_RESULTS: "${{steps.task-2-1.outputs.result}}"
+        TASK-2-2_RESULTS: "${{steps.task-2-2.outputs.result}}"
+        TASK-2-3_RESULTS: "${{steps.task-2-3.outputs.result}}"
+        TASK-2-4_RESULTS: "${{steps.task-2-4.outputs.result}}"
+      with:
+        runners: setup,task-2-1,task-2-2,task-2-3,task-2-4
